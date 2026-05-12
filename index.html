@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>にゃんこハウス｜NYANKO HOUSE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-1:#fff4e6;
+  --bg-2:#ffe2ec;
+  --bg-3:#fce1d3;
+  --cream:#fff8ee;
+  --pink:#ff8fab;
+  --pink-deep:#e36b8c;
+  --brown:#5b3a29;
+  --brown-soft:#8a6a55;
+  --gold:#f4b740;
+  --mint:#a3d9c9;
+  --ink:#3a2418;
+  --line:rgba(91,58,41,.18);
+  --shadow:0 8px 0 rgba(91,58,41,.12), 0 18px 28px -10px rgba(91,58,41,.22);
+  --inset:inset 0 -4px 0 rgba(91,58,41,.12);
+  --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'M PLUS Rounded 1c','Kosugi Maru',system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(900px 600px at 10% 0%,#ffd9e6 0%,transparent 55%),
+    radial-gradient(800px 700px at 100% 100%,#ffe9c9 0%,transparent 55%),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  min-height:100vh;
+  overflow-x:hidden;
+  user-select:none;
+}
+/* paw print background */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 10% 20%,rgba(255,143,171,.18) 0 6px,transparent 7px),
+    radial-gradient(circle at 80% 35%,rgba(244,183,64,.18) 0 5px,transparent 6px),
+    radial-gradient(circle at 30% 75%,rgba(163,217,201,.20) 0 6px,transparent 7px),
+    radial-gradient(circle at 65% 88%,rgba(255,143,171,.16) 0 4px,transparent 5px);
+  background-size:240px 240px;
+  opacity:.7;
+}
+
+.app{
+  position:relative;z-index:1;
+  max-width:520px;margin:0 auto;padding:10px 14px 120px;
+}
+
+/* ===== Top ad banner ===== */
+.ad{
+  display:flex;align-items:center;justify-content:center;
+  background:repeating-linear-gradient(45deg,#fff,#fff 8px,#fff3df 8px,#fff3df 16px);
+  border:1.5px dashed var(--brown-soft);
+  color:var(--brown-soft);
+  font-size:11px;letter-spacing:.12em;
+  border-radius:14px;
+  padding:10px;
+  margin-bottom:10px;
+}
+.ad.bottom{
+  position:fixed;left:0;right:0;bottom:0;
+  max-width:520px;margin:0 auto;
+  border-radius:14px 14px 0 0;
+  z-index:5;
+  height:56px;
+}
+
+/* ===== Header ===== */
+.head{
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(180deg,#fffaf2,#fff1e0);
+  border:2px solid var(--ink);
+  border-radius:var(--radius);
+  padding:10px 14px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+.logo{
+  font-family:'Mochiy Pop One',sans-serif;
+  font-size:20px;line-height:1;
+  color:var(--brown);
+  display:flex;align-items:center;gap:8px;
+}
+.logo small{
+  display:block;font-family:'M PLUS Rounded 1c';font-weight:800;
+  font-size:9px;letter-spacing:.25em;color:var(--pink-deep);margin-top:4px;
+}
+.points{
+  display:flex;align-items:center;gap:6px;
+  background:var(--ink);color:#fff;
+  padding:8px 12px;border-radius:999px;
+  font-weight:800;font-size:14px;
+  box-shadow:var(--inset);
+}
+.points .coin{
+  width:20px;height:20px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffe27a,#f4b740 60%,#c98a1d);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:10px;color:#7a4e0a;font-weight:800;
+}
+
+/* ===== Course ===== */
+.course-wrap{
+  position:relative;
+  background:linear-gradient(180deg,#fff8ee,#ffe9d4);
+  border:2px solid var(--ink);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:12px;
+  margin-bottom:12px;
+  overflow:hidden;
+}
+.course-title{
+  font-family:'Mochiy Pop One',sans-serif;
+  font-size:13px;color:var(--brown);
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:8px;
+}
+.course-title .tag{
+  background:var(--pink);color:#fff;font-weight:800;font-size:10px;
+  padding:3px 8px;border-radius:999px;letter-spacing:.1em;
+}
+.course{
+  position:relative;
+  width:100%;height:150px;
+  background:
+    radial-gradient(120px 30px at 50% 100%,rgba(0,0,0,.12),transparent 70%),
+    repeating-linear-gradient(90deg,#a3d9c9 0 22px,#92ceba 22px 44px);
+  border-radius:16px;
+  border:2px solid var(--ink);
+  overflow:hidden;
+}
+.course::before{
+  /* track ring */
+  content:"";position:absolute;inset:18px;
+  border:3px dashed #fff;
+  border-radius:80px;
+  opacity:.75;
+}
+.runner{
+  position:absolute;font-size:30px;line-height:1;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,.18));
+  transform:translate(-50%,-50%);
+  animation:run var(--dur,10s) linear infinite;
+  offset-rotate:0deg;
+}
+@keyframes run{
+  0%   {left:10%; top:50%;}
+  25%  {left:50%; top:12%;}
+  50%  {left:90%; top:50%;}
+  75%  {left:50%; top:88%;}
+  100% {left:10%; top:50%;}
+}
+.bounce{animation-name:run,bob;animation-duration:var(--dur,10s),.5s;animation-iteration-count:infinite,infinite;animation-timing-function:linear,ease-in-out;}
+@keyframes bob{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-4px)}}
+
+.coin-pop{
+  position:absolute;font-weight:800;font-size:13px;color:var(--gold);
+  text-shadow:0 2px 0 #7a4e0a;
+  pointer-events:none;animation:pop 1s ease-out forwards;
+}
+@keyframes pop{
+  0%{transform:translateY(0);opacity:0}
+  20%{opacity:1}
+  100%{transform:translateY(-30px);opacity:0}
+}
+.empty-course{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--brown-soft);font-size:12px;letter-spacing:.05em;
+}
+
+/* ===== Grid ===== */
+.panel{
+  background:linear-gradient(180deg,#fffaf2,#ffeed8);
+  border:2px solid var(--ink);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:12px;
+  margin-bottom:12px;
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.panel-head h2{
+  font-family:'Mochiy Pop One',sans-serif;
+  font-size:13px;color:var(--brown);
+}
+.hint{font-size:10px;color:var(--brown-soft)}
+
+.grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+}
+.cell{
+  aspect-ratio:1/1;
+  background:#fff6e5;
+  border:2px dashed rgba(91,58,41,.25);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  transition:transform .15s, background .15s, border-color .15s;
+}
+.cell.drop{background:#fff;border-color:var(--pink);border-style:solid;}
+.cell.has .nyan{cursor:grab}
+.nyan{
+  width:84%;height:84%;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,#ffe5d0 60%,#f3c8a5);
+  border:2px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+  box-shadow:var(--inset),0 4px 0 rgba(91,58,41,.15);
+  position:relative;
+  transition:transform .15s;
+}
+.nyan.dragging{transform:scale(1.08) rotate(-3deg);opacity:.9;z-index:10}
+.nyan .lv{
+  position:absolute;bottom:-6px;right:-6px;
+  background:var(--ink);color:#fff;font-size:9px;font-weight:800;
+  border-radius:999px;padding:2px 6px;
+  border:2px solid #fff;
+}
+.nyan.legendary{
+  background:radial-gradient(circle at 35% 30%,#fff,#ffe27a 50%,#f4b740 80%);
+  animation:glow 1.6s ease-in-out infinite;
+}
+@keyframes glow{0%,100%{box-shadow:var(--inset),0 0 0 0 rgba(244,183,64,.6)}50%{box-shadow:var(--inset),0 0 0 8px rgba(244,183,64,0)}}
+
+/* ===== Controls ===== */
+.controls{
+  display:grid;grid-template-columns:1.4fr 1fr;gap:10px;
+}
+.btn{
+  border:2px solid var(--ink);
+  border-radius:18px;
+  padding:14px 12px;
+  font-family:inherit;font-weight:800;
+  font-size:14px;
+  cursor:pointer;
+  box-shadow:0 5px 0 var(--ink);
+  transition:transform .08s, box-shadow .08s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  line-height:1.1;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.primary{background:var(--pink);color:#fff}
+.btn.primary .can{font-size:18px}
+.btn.ghost{background:#fff;color:var(--brown)}
+.btn.reward{
+  grid-column:1/-1;
+  background:linear-gradient(90deg,#ffd76b,#f4b740);
+  color:#5a3b00;
+  position:relative;
+  overflow:hidden;
+}
+.btn.reward::after{
+  content:"AD";
+  position:absolute;top:6px;right:8px;
+  font-size:9px;background:#5a3b00;color:#ffd76b;
+  padding:1px 5px;border-radius:6px;letter-spacing:.1em;
+}
+.cost{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(0,0,0,.18);
+  color:#fff;
+  font-size:11px;font-weight:800;
+  padding:3px 8px;border-radius:999px;
+}
+.btn.ghost .cost{background:rgba(91,58,41,.15);color:var(--brown)}
+
+/* ===== Collection / progress ===== */
+.tree{
+  display:flex;gap:6px;overflow-x:auto;padding:4px 2px;
+  scrollbar-width:none;
+}
+.tree::-webkit-scrollbar{display:none}
+.tier{
+  flex:0 0 auto;
+  width:56px;text-align:center;
+  background:#fff;border:2px solid var(--ink);
+  border-radius:14px;padding:6px 4px;
+  position:relative;
+}
+.tier.locked{opacity:.4;filter:grayscale(.6)}
+.tier .e{font-size:22px;line-height:1}
+.tier .n{font-size:9px;color:var(--brown-soft);margin-top:2px;letter-spacing:.02em}
+.tier .b{
+  position:absolute;top:-6px;left:-6px;
+  background:var(--pink);color:#fff;font-size:9px;font-weight:800;
+  border-radius:999px;padding:2px 5px;border:2px solid #fff;
+}
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed;left:50%;bottom:80px;transform:translateX(-50%);
+  background:var(--ink);color:#fff;
+  padding:10px 16px;border-radius:999px;
+  font-weight:700;font-size:13px;
+  box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
+  z-index:20;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+/* ===== Merge burst ===== */
+.burst{position:absolute;inset:0;pointer-events:none}
+.spark{
+  position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:50%;
+  background:var(--gold);
+  animation:spark .7s ease-out forwards;
+}
+@keyframes spark{
+  0%{transform:translate(-50%,-50%) scale(.6)}
+  100%{transform:translate(calc(-50% + var(--dx))   ,calc(-50% + var(--dy))) scale(0);opacity:0}
+}
+
+/* ===== Modal ===== */
+.modal{
+  position:fixed;inset:0;background:rgba(58,36,24,.55);
+  display:none;align-items:center;justify-content:center;
+  z-index:50;padding:20px;
+}
+.modal.show{display:flex}
+.modal .card{
+  background:linear-gradient(180deg,#fffaf2,#ffe9d4);
+  border:2px solid var(--ink);border-radius:var(--radius);
+  padding:24px 20px;text-align:center;max-width:340px;width:100%;
+  box-shadow:var(--shadow);
+}
+.modal h3{font-family:'Mochiy Pop One',sans-serif;color:var(--brown);font-size:18px;margin-bottom:6px}
+.modal .big{font-size:64px;margin:8px 0}
+.modal p{font-size:13px;color:var(--brown-soft);margin-bottom:14px}
+.modal .btn{width:100%}
+
+/* ===== Floating cat (when summoning empty grid full) ===== */
+@media (max-width:380px){
+  .nyan{font-size:24px}
+  .head{padding:8px 10px}
+  .logo{font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- top ad placeholder -->
+  <div class="ad" id="adTop">［広告スペース／AdSense 上部バナー］</div>
+
+  <!-- header -->
+  <header class="head">
+    <div class="logo">
+      🐾
+      <div>
+        にゃんこハウス
+        <small>NYANKO HOUSE</small>
+      </div>
+    </div>
+    <div class="points" title="にゃんこポイント">
+      <span class="coin">P</span>
+      <span id="pts">0</span>
+    </div>
+  </header>
+
+  <!-- course -->
+  <section class="course-wrap">
+    <div class="course-title">
+      <span class="tag">COURSE</span>
+      <span>おさんぽコース：周回でポイントゲット</span>
+    </div>
+    <div class="course" id="course">
+      <div class="empty-course" id="emptyCourse">猫をタップしてコースに送り出そう</div>
+    </div>
+  </section>
+
+  <!-- grid -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>🐱 召喚エリア</h2>
+      <span class="hint">同じ猫をドラッグで重ねるとマージ</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- controls -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>🥫 アクション</h2>
+      <span class="hint" id="capacity">空き 16/16</span>
+    </div>
+    <div class="controls">
+      <button class="btn primary" id="summon">
+        <span class="can">🥫</span>
+        猫缶で召喚
+        <span class="cost" id="costLbl">P 10</span>
+      </button>
+      <button class="btn ghost" id="send">
+        🐾 コースへ送る
+      </button>
+      <button class="btn reward" id="rewardAd">
+        🎁 動画を見て猫缶 +5
+      </button>
+    </div>
+  </section>
+
+  <!-- collection -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>📖 ずかん</h2>
+      <span class="hint">10段階の進化</span>
+    </div>
+    <div class="tree" id="tree"></div>
+  </section>
+
+  <!-- toast -->
+  <div class="toast" id="toast">ok</div>
+
+  <!-- bottom ad placeholder -->
+  <div class="ad bottom" id="adBottom">［広告スペース／AdSense 下部バナー 320×50〕</div>
+</div>
+
+<!-- level up modal -->
+<div class="modal" id="modal">
+  <div class="card">
+    <div style="font-size:10px;letter-spacing:.2em;color:var(--pink-deep);font-weight:800">NEW NYANKO!</div>
+    <h3 id="mName">茶トラ</h3>
+    <div class="big" id="mEmoji">🐈</div>
+    <p id="mDesc">あたらしい猫が なかまになった！</p>
+    <button class="btn primary" id="mClose">つづける</button>
+  </div>
+</div>
+
+<script>
+/* ============ Data ============ */
+const CATS = [
+  {lv:1,  name:'子猫',          emoji:'🐱', rate:1,   color:'#ffd6a5'},
+  {lv:2,  name:'茶トラ',        emoji:'🐈', rate:2,   color:'#e9a06b'},
+  {lv:3,  name:'サバトラ',      emoji:'😺', rate:4,   color:'#b9c4cc'},
+  {lv:4,  name:'三毛猫',        emoji:'😸', rate:8,   color:'#f6c177'},
+  {lv:5,  name:'キジトラ',      emoji:'😻', rate:16,  color:'#a78760'},
+  {lv:6,  name:'ロシアンブルー',emoji:'😽', rate:32,  color:'#8fb5d1'},
+  {lv:7,  name:'ペルシャ',      emoji:'🙀', rate:64,  color:'#ffe9d4'},
+  {lv:8,  name:'メインクーン',  emoji:'😼', rate:128, color:'#c79b6f'},
+  {lv:9,  name:'スコティッシュ',emoji:'🐈‍⬛', rate:256, color:'#5b4a44'},
+  {lv:10, name:'ライオン（幻）',emoji:'🦁', rate:600, color:'#f4b740'},
+];
+
+const GRID_SIZE = 16;
+const SUMMON_BASE_COST = 10;
+
+/* ============ State ============ */
+let state = load() || {
+  points: 30,
+  grid: Array(GRID_SIZE).fill(null),  // each cell: {lv}
+  course: [],                          // [{lv, dur, id}]
+  summonCost: SUMMON_BASE_COST,
+  maxUnlocked: 1,
+};
+
+const STORAGE_KEY = 'nyanko_house_v1';
+const OLD_KEY = 'nyanko_v1';
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) }
+function load(){
+  try{
+    let raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw){
+      // migrate old save once
+      const old = localStorage.getItem(OLD_KEY);
+      if (old){ raw = old; localStorage.setItem(STORAGE_KEY, old); localStorage.removeItem(OLD_KEY); }
+    }
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null }
+}
+
+/* ============ Render ============ */
+const $grid = document.getElementById('grid');
+const $course = document.getElementById('course');
+const $pts = document.getElementById('pts');
+const $costLbl = document.getElementById('costLbl');
+const $capacity = document.getElementById('capacity');
+const $emptyCourse = document.getElementById('emptyCourse');
+const $tree = document.getElementById('tree');
+
+function catData(lv){ return CATS[lv-1] }
+
+function renderGrid(){
+  $grid.innerHTML = '';
+  state.grid.forEach((c, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (c ? ' has' : '');
+    cell.dataset.idx = i;
+
+    if (c){
+      const n = document.createElement('div');
+      n.className = 'nyan' + (c.lv === 10 ? ' legendary' : '');
+      n.style.background = `radial-gradient(circle at 35% 30%, #fff, ${catData(c.lv).color} 60%, ${shade(catData(c.lv).color,-20)} 100%)`;
+      n.draggable = true;
+      n.dataset.idx = i;
+      n.innerHTML = `${catData(c.lv).emoji}<span class="lv">Lv${c.lv}</span>`;
+      cell.appendChild(n);
+
+      n.addEventListener('dragstart', onDragStart);
+      n.addEventListener('dragend', onDragEnd);
+      // touch
+      n.addEventListener('touchstart', onTouchStart, {passive:false});
+    }
+
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drop') });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drop'));
+    cell.addEventListener('drop', onDrop);
+
+    $grid.appendChild(cell);
+  });
+
+  const empty = state.grid.filter(x => !x).length;
+  $capacity.textContent = `空き ${empty}/${GRID_SIZE}`;
+}
+
+function renderHud(){
+  $pts.textContent = Math.floor(state.points);
+  $costLbl.textContent = 'P ' + state.summonCost;
+  document.getElementById('summon').disabled = state.points < state.summonCost || state.grid.every(x => x);
+}
+
+function renderTree(){
+  $tree.innerHTML = '';
+  CATS.forEach(c => {
+    const t = document.createElement('div');
+    t.className = 'tier' + (c.lv > state.maxUnlocked ? ' locked' : '');
+    t.innerHTML = `
+      <span class="b">Lv${c.lv}</span>
+      <div class="e">${c.lv > state.maxUnlocked ? '❓' : c.emoji}</div>
+      <div class="n">${c.lv > state.maxUnlocked ? '???' : c.name}</div>
+    `;
+    $tree.appendChild(t);
+  });
+}
+
+function renderCourse(){
+  // remove all runners
+  $course.querySelectorAll('.runner').forEach(n => n.remove());
+  $emptyCourse.style.display = state.course.length ? 'none' : 'flex';
+  state.course.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'runner bounce';
+    el.style.setProperty('--dur', c.dur + 's');
+    el.style.animationDelay = `-${(i * 1.5) % c.dur}s`;
+    el.textContent = catData(c.lv).emoji;
+    $course.appendChild(el);
+  });
+}
+
+/* ============ Helpers ============ */
+function shade(hex, pct){
+  const n = parseInt(hex.slice(1),16);
+  let r = (n>>16)&255, g = (n>>8)&255, b = n&255;
+  r = Math.max(0,Math.min(255, r + Math.round(r*pct/100)));
+  g = Math.max(0,Math.min(255, g + Math.round(g*pct/100)));
+  b = Math.max(0,Math.min(255, b + Math.round(b*pct/100)));
+  return '#' + ((1<<24) + (r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.classList.remove('show'), 1500);
+}
+
+/* ============ Drag & drop ============ */
+let dragFrom = null;
+
+function onDragStart(e){
+  dragFrom = +e.currentTarget.dataset.idx;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.setData('text/plain', dragFrom);
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragEnd(e){ e.currentTarget.classList.remove('dragging') }
+
+function onDrop(e){
+  e.preventDefault();
+  const cell = e.currentTarget;
+  cell.classList.remove('drop');
+  const to = +cell.dataset.idx;
+  if (dragFrom === null || to === dragFrom) return;
+  handleMove(dragFrom, to);
+  dragFrom = null;
+}
+
+/* touch drag (mobile) */
+let touchDrag = null;
+function onTouchStart(e){
+  e.preventDefault();
+  const el = e.currentTarget;
+  const idx = +el.dataset.idx;
+  const clone = el.cloneNode(true);
+  clone.style.position = 'fixed';
+  clone.style.pointerEvents = 'none';
+  clone.style.zIndex = 100;
+  clone.style.width = el.offsetWidth + 'px';
+  clone.style.height = el.offsetHeight + 'px';
+  clone.style.opacity = .9;
+  document.body.appendChild(clone);
+  touchDrag = {from:idx, clone};
+
+  const move = ev => {
+    const t = ev.touches[0];
+    clone.style.left = (t.clientX - clone.offsetWidth/2) + 'px';
+    clone.style.top  = (t.clientY - clone.offsetHeight/2) + 'px';
+    const el2 = document.elementFromPoint(t.clientX, t.clientY);
+    document.querySelectorAll('.cell.drop').forEach(c=>c.classList.remove('drop'));
+    if (el2){
+      const cell = el2.closest('.cell');
+      if (cell) cell.classList.add('drop');
+    }
+  };
+  const end = ev => {
+    document.removeEventListener('touchmove', move);
+    document.removeEventListener('touchend', end);
+    const t = ev.changedTouches[0];
+    const el2 = document.elementFromPoint(t.clientX, t.clientY);
+    const cell = el2 && el2.closest('.cell');
+    document.querySelectorAll('.cell.drop').forEach(c=>c.classList.remove('drop'));
+    clone.remove();
+    if (cell){
+      const to = +cell.dataset.idx;
+      if (to !== touchDrag.from) handleMove(touchDrag.from, to);
+    }
+    touchDrag = null;
+  };
+  document.addEventListener('touchmove', move, {passive:false});
+  document.addEventListener('touchend', end);
+  // trigger first move to position clone
+  move(e);
+}
+
+/* ============ Logic ============ */
+function handleMove(from, to){
+  const a = state.grid[from], b = state.grid[to];
+  if (!a) return;
+  if (!b){
+    // move
+    state.grid[to] = a;
+    state.grid[from] = null;
+  } else if (a.lv === b.lv && a.lv < 10){
+    // merge
+    state.grid[to] = { lv: a.lv + 1 };
+    state.grid[from] = null;
+    spawnBurst(to);
+    const newLv = a.lv + 1;
+    if (newLv > state.maxUnlocked){
+      state.maxUnlocked = newLv;
+      showLevelUp(newLv);
+    } else {
+      toast(`Lv${newLv} ${catData(newLv).name} にしんか！`);
+    }
+  } else if (a.lv === b.lv && a.lv === 10){
+    toast('ライオンはこれ以上進化しない');
+  } else {
+    toast('同じ猫じゃないとマージできないよ');
+  }
+  save(); renderGrid(); renderHud(); renderTree();
+}
+
+function spawnBurst(idx){
+  const cell = $grid.children[idx];
+  const b = document.createElement('div');
+  b.className = 'burst';
+  for (let i=0;i<10;i++){
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const a = (i/10) * Math.PI*2;
+    s.style.setProperty('--dx', Math.cos(a)*40 + 'px');
+    s.style.setProperty('--dy', Math.sin(a)*40 + 'px');
+    s.style.background = i%2 ? 'var(--pink)' : 'var(--gold)';
+    b.appendChild(s);
+  }
+  cell.appendChild(b);
+  setTimeout(()=>b.remove(), 800);
+}
+
+function summon(){
+  if (state.points < state.summonCost) { toast('ポイントが足りない…'); return }
+  const empty = state.grid.findIndex(x => !x);
+  if (empty === -1) { toast('召喚エリアがいっぱい！'); return }
+  state.points -= state.summonCost;
+  state.grid[empty] = { lv: 1 };
+  // gentle inflation
+  state.summonCost = Math.min(99, Math.round(SUMMON_BASE_COST + state.points/200));
+  save(); renderGrid(); renderHud();
+}
+
+function sendToCourse(){
+  // pick highest-Lv cat from grid and put on course (max 5)
+  if (state.course.length >= 5){ toast('コースは5匹までだよ'); return }
+  let bestIdx = -1, bestLv = 0;
+  state.grid.forEach((c,i)=>{ if (c && c.lv > bestLv){ bestLv = c.lv; bestIdx = i } });
+  if (bestIdx === -1){ toast('召喚エリアに猫がいないよ'); return }
+  const cat = state.grid[bestIdx];
+  state.grid[bestIdx] = null;
+  // duration: higher lv -> faster
+  const dur = Math.max(4, 12 - cat.lv * 0.8);
+  state.course.push({ lv: cat.lv, dur, id: Date.now()+Math.random() });
+  toast(`${catData(cat.lv).name} がコースへ！`);
+  save(); renderGrid(); renderHud(); renderCourse();
+}
+
+function showLevelUp(lv){
+  const c = catData(lv);
+  document.getElementById('mName').textContent = c.name;
+  document.getElementById('mEmoji').textContent = c.emoji;
+  document.getElementById('mDesc').textContent = lv === 10
+    ? 'でんせつの ライオンが目をさました！'
+    : `あたらしい猫 ${c.name} がなかまになった！`;
+  document.getElementById('modal').classList.add('show');
+}
+
+/* ============ Income loop ============ */
+let lastTick = Date.now();
+setInterval(()=>{
+  const now = Date.now();
+  const dt = (now - lastTick)/1000;
+  lastTick = now;
+  if (!state.course.length) return;
+  // each cat earns rate/(dur) per second, roughly proportional to laps
+  let gain = 0;
+  state.course.forEach(c => {
+    gain += catData(c.lv).rate / (c.dur*1.2);
+  });
+  gain *= dt;
+  state.points += gain;
+  // throw coin pops occasionally
+  if (Math.random() < dt * 0.8) {
+    const pop = document.createElement('div');
+    pop.className = 'coin-pop';
+    pop.textContent = '+' + Math.max(1, Math.floor(gain*5));
+    pop.style.left = (20 + Math.random()*60) + '%';
+    pop.style.top  = (30 + Math.random()*40) + '%';
+    $course.appendChild(pop);
+    setTimeout(()=>pop.remove(), 1000);
+  }
+  renderHud();
+  // save occasionally
+  if (Math.random() < 0.02) save();
+}, 200);
+
+/* ============ Events ============ */
+document.getElementById('summon').addEventListener('click', summon);
+document.getElementById('send').addEventListener('click', sendToCourse);
+document.getElementById('rewardAd').addEventListener('click', ()=>{
+  // simulate ad watch
+  toast('（広告再生シミュレーション）');
+  setTimeout(()=>{
+    state.points += 50;
+    toast('にゃんこポイント +50！');
+    save(); renderHud();
+  }, 800);
+});
+document.getElementById('mClose').addEventListener('click', ()=>{
+  document.getElementById('modal').classList.remove('show');
+});
+
+/* init */
+renderGrid(); renderHud(); renderTree(); renderCourse();
+</script>
+</body>
+</html>
