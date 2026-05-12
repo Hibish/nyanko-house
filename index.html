@@ -53,6 +53,7 @@ body::before{
 .app{
   position:relative;z-index:1;
   max-width:520px;margin:0 auto;padding:8px 12px 120px;
+  min-height:100vh;
 }
 .app.tab-zukan .home-screen{display:none}
 .app:not(.tab-zukan) .zukan-screen{display:none}
@@ -75,6 +76,8 @@ body::before{
   border-radius:14px 14px 0 0;
   z-index:5;
   height:56px;
+  background:#fff;
+  border:1.5px dashed var(--brown-soft);
 }
 
 /* ===== Footer tabs ===== */
@@ -84,8 +87,12 @@ body::before{
   display:grid;grid-template-columns:1fr 1fr;
   background:#fffaf2;
   border-top:2px solid var(--ink);
+  border-left:2px solid var(--ink);
+  border-right:2px solid var(--ink);
+  border-radius:18px 18px 0 0;
   z-index:6;
   height:48px;
+  box-shadow:0 -4px 12px rgba(91,58,41,.08);
 }
 .tab-btn{
   background:transparent;border:none;
@@ -222,12 +229,14 @@ body::before{
 
 .grid{
   display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
+  max-width:300px;margin:0 auto;
 }
 .cell{
   aspect-ratio:1/1;
+  max-width:70px;max-height:70px;
   background:#fff6e5;
   border:2px dashed rgba(91,58,41,.25);
-  border-radius:16px;
+  border-radius:14px;
   display:flex;align-items:center;justify-content:center;
   position:relative;
   transition:transform .15s, background .15s, border-color .15s;
@@ -240,7 +249,7 @@ body::before{
   background:radial-gradient(circle at 35% 30%,#fff,#ffe5d0 60%,#f3c8a5);
   border:2px solid var(--ink);
   display:flex;align-items:center;justify-content:center;
-  font-size:30px;
+  font-size:26px;
   box-shadow:var(--inset),0 4px 0 rgba(91,58,41,.15);
   position:relative;
   transition:transform .15s;
