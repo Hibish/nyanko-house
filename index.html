@@ -253,6 +253,12 @@ body::before{
 }
 .btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.reward:disabled{
+  background:linear-gradient(90deg,#e8d9b9,#c8b787);
+  color:#6a5530;
+  opacity:1;
+}
+.btn.reward:disabled::after{display:none}
 .btn.primary{background:var(--pink);color:#fff}
 .btn.primary .can{font-size:18px}
 .btn.ghost{background:#fff;color:var(--brown)}
@@ -758,14 +764,34 @@ setInterval(()=>{
 document.getElementById('summon').addEventListener('click', summon);
 document.getElementById('send').addEventListener('click', sendToCourse);
 document.getElementById('rewardAd').addEventListener('click', ()=>{
+  if (rewardCooldownUntil > Date.now()) return;
   // simulate ad watch
   toast('（広告再生シミュレーション）');
   setTimeout(()=>{
     state.points += 50;
     toast('にゃんこポイント +50！');
     save(); renderHud();
+    // start 30s cooldown
+    rewardCooldownUntil = Date.now() + 30000;
+    updateRewardButton();
   }, 800);
 });
+
+// reward ad cooldown
+let rewardCooldownUntil = 0;
+const $rewardBtn = document.getElementById('rewardAd');
+const REWARD_LABEL = $rewardBtn.innerHTML;
+function updateRewardButton(){
+  const remain = Math.ceil((rewardCooldownUntil - Date.now()) / 1000);
+  if (remain > 0){
+    $rewardBtn.disabled = true;
+    $rewardBtn.innerHTML = `⏳ 待機中… ${remain}s`;
+  } else {
+    $rewardBtn.disabled = false;
+    $rewardBtn.innerHTML = REWARD_LABEL;
+  }
+}
+setInterval(updateRewardButton, 1000);
 document.getElementById('mClose').addEventListener('click', ()=>{
   document.getElementById('modal').classList.remove('show');
 });
