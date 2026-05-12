@@ -52,8 +52,9 @@ body::before{
 
 .app{
   position:relative;z-index:1;
-  max-width:520px;margin:0 auto;padding:8px 12px 120px;
-  min-height:100vh;
+  max-width:520px;margin:0 auto;padding:8px 12px;
+  min-height:calc(100vh - 104px);
+  padding-bottom:120px;
 }
 .app.tab-zukan .home-screen{display:none}
 .app:not(.tab-zukan) .zukan-screen{display:none}
@@ -71,19 +72,22 @@ body::before{
 }
 .ad.top{display:none}
 .ad.bottom{
-  position:fixed;left:0;right:0;bottom:0;
-  max-width:520px;margin:0 auto;
+  position:fixed;left:50%;bottom:0;
+  transform:translateX(-50%);
+  width:100%;max-width:520px;
   border-radius:14px 14px 0 0;
   z-index:5;
   height:56px;
   background:#fff;
   border:1.5px dashed var(--brown-soft);
+  margin:0;
 }
 
 /* ===== Footer tabs ===== */
 .tabs{
-  position:fixed;left:0;right:0;bottom:56px;
-  max-width:520px;margin:0 auto;
+  position:fixed;left:50%;bottom:56px;
+  transform:translateX(-50%);
+  width:100%;max-width:520px;
   display:grid;grid-template-columns:1fr 1fr;
   background:#fffaf2;
   border-top:2px solid var(--ink);
@@ -92,6 +96,7 @@ body::before{
   border-radius:18px 18px 0 0;
   z-index:6;
   height:48px;
+  margin:0;
   box-shadow:0 -4px 12px rgba(91,58,41,.08);
 }
 .tab-btn{
