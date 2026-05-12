@@ -31,8 +31,12 @@
   --radius:22px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow-x:hidden}
+html,body{height:100%;overflow:hidden;overflow-x:hidden}
 html{overscroll-behavior:none}
+body{
+  height:var(--app-h, 100dvh);
+  overflow:hidden;
+}
 body{
   font-family:'M PLUS Rounded 1c','Kosugi Maru',system-ui,sans-serif;
   color:var(--ink);
@@ -59,11 +63,86 @@ body::before{
 .app{
   position:relative;z-index:1;
   max-width:520px;margin:0 auto;padding:8px 12px;
-  min-height:calc(100dvh - 104px - env(safe-area-inset-bottom));
+  min-height:calc(var(--app-h, 100dvh) - 104px - env(safe-area-inset-bottom));
   padding-bottom:calc(120px + env(safe-area-inset-bottom));
+  height:var(--app-h, 100dvh);
+  overflow:hidden;
 }
-.app.tab-zukan .home-screen{display:none}
+.app.tab-zukan .home-screen, .app.tab-shop .home-screen{display:none}
 .app:not(.tab-zukan) .zukan-screen{display:none}
+.app:not(.tab-shop) .shop-screen{display:none}
+.zukan-screen, .shop-screen{
+  height:calc(var(--app-h, 100dvh) - 104px - env(safe-area-inset-bottom) - 40px);
+  overflow-y:auto;
+}
+
+/* ===== Shop ===== */
+.shop-item{
+  display:flex;align-items:center;gap:10px;
+  background:#fff;border:2px solid var(--ink);
+  border-radius:16px;padding:10px;
+  margin-bottom:8px;
+  box-shadow:0 4px 0 rgba(91,58,41,.12);
+}
+.shop-item .si-ic{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(180deg,#fff3df,#ffe2c5);
+  border:2px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex:0 0 auto;
+}
+.shop-item .si-info{flex:1;min-width:0}
+.shop-item .si-name{font-weight:800;font-size:13px;color:var(--brown);line-height:1.2}
+.shop-item .si-desc{font-size:11px;color:var(--brown-soft);margin-top:2px}
+.shop-item .si-buy{
+  flex:0 0 auto;
+  background:var(--pink);color:#fff;
+  border:2px solid var(--ink);border-radius:12px;
+  padding:7px 10px;font-family:inherit;font-weight:800;font-size:12px;
+  cursor:pointer;
+  box-shadow:0 3px 0 var(--ink);
+  display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.1;
+}
+.shop-item .si-buy:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.shop-item .si-buy:disabled{background:#d9c9b6;color:#867560;cursor:not-allowed}
+.shop-item .si-buy .price{font-size:10px;opacity:.9}
+.shop-item.owned .si-buy{background:#a3d9c9;color:var(--brown)}
+.shop-item .stock{
+  font-size:10px;color:var(--pink-deep);font-weight:800;margin-top:2px;
+}
+
+/* speed-up badge over course */
+.speed-badge{
+  position:absolute;top:6px;right:6px;
+  background:var(--gold);color:#5a3b00;
+  font-weight:800;font-size:10px;
+  padding:3px 8px;border-radius:999px;
+  border:2px solid var(--ink);
+  z-index:2;
+  animation:speedPulse 1s ease-in-out infinite;
+}
+@keyframes speedPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* lucky charm indicator on summon button */
+.btn.primary.has-charm{
+  background:linear-gradient(90deg,var(--pink),#ffd76b);
+  position:relative;
+}
+.btn.primary.has-charm::before{
+  content:"🍀";position:absolute;top:-8px;left:-8px;
+  font-size:18px;
+  filter:drop-shadow(0 2px 0 rgba(0,0,0,.2));
+  animation:charmBob 1.4s ease-in-out infinite;
+}
+@keyframes charmBob{0%,100%{transform:translateY(0) rotate(-10deg)}50%{transform:translateY(-3px) rotate(10deg)}}
+
+/* first-time hint */
+.first-hint{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--brown-soft);font-size:12px;letter-spacing:.05em;
+  pointer-events:none;
+  text-align:center;padding:0 10px;
+}
 
 /* ===== Top ad banner ===== */
 .ad{
@@ -96,7 +175,7 @@ body::before{
   position:fixed;left:50%;bottom:calc(56px + env(safe-area-inset-bottom));
   transform:translateX(-50%);
   width:100%;max-width:520px;
-  display:grid;grid-template-columns:1fr 1fr;
+  display:grid;grid-template-columns:1fr 1fr 1fr;
   background:#fffaf2;
   border-top:2px solid var(--ink);
   border-left:2px solid var(--ink);
@@ -125,10 +204,28 @@ body::before{
 
 /* ===== Header ===== */
 .head{
-  display:flex;align-items:center;justify-content:flex-end;
+  display:flex;align-items:center;justify-content:flex-end;gap:8px;
   padding:4px 4px 8px;
   margin-bottom:6px;
 }
+.currency{
+  display:flex;align-items:center;gap:6px;
+  background:var(--ink);color:#fff;
+  padding:6px 12px;border-radius:999px;
+  font-weight:800;font-size:13px;
+  box-shadow:var(--inset);
+  border:2px solid var(--ink);
+}
+.currency.cans{
+  background:#fff;color:var(--brown);
+}
+.currency .coin{
+  width:18px;height:18px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffe27a,#f4b740 60%,#c98a1d);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:9px;color:#7a4e0a;font-weight:800;
+}
+.currency .ic{font-size:15px;line-height:1}
 .points{
   display:flex;align-items:center;gap:6px;
   background:var(--ink);color:#fff;
@@ -244,6 +341,14 @@ body::before{
   display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
   max-width:300px;margin:0 auto;
 }
+.grid.expanded{
+  grid-template-columns:repeat(5,1fr);
+  max-width:320px;
+}
+.grid.expanded .cell{
+  max-width:58px;max-height:58px;border-radius:12px;
+}
+.grid.expanded .nyan{font-size:22px}
 .cell{
   aspect-ratio:1/1;
   max-width:70px;max-height:70px;
@@ -498,6 +603,10 @@ body::before{
 
   <!-- header -->
   <header class="head">
+    <div class="currency cans" title="猫缶">
+      <span class="ic">🥫</span>
+      <span id="cans">3</span>
+    </div>
     <div class="points" title="にゃんこポイント">
       <span class="coin">P</span>
       <span id="pts">0</span>
@@ -514,7 +623,8 @@ body::before{
       <span>おさんぽコース：周回でポイントゲット</span>
     </div>
     <div class="course" id="course">
-      <div class="empty-course" id="emptyCourse">猫をタップしてコースに送り出そう</div>
+      <div class="speed-badge" id="speedBadge" style="display:none">⚡ ×2</div>
+      <div class="first-hint" id="firstHint" style="display:none">猫をドラッグしてここに置こう</div>
     </div>
   </section>
 
@@ -533,18 +643,29 @@ body::before{
       <button class="btn primary" id="summon">
         <span class="can">🥫</span>
         猫缶で召喚
-        <span class="cost" id="costLbl">P 10</span>
+        <span class="cost" id="costLbl">×1</span>
       </button>
       <button class="btn ghost" id="send">
         🐾 コースへ送る
       </button>
       <button class="btn reward" id="rewardAd">
-        🎁 動画を見て猫缶 +5
+        🎁 動画を見てポイント +50
       </button>
     </div>
   </section>
 
   </div><!-- /home-screen -->
+
+  <!-- ===== SHOP SCREEN ===== -->
+  <div class="shop-screen">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>🛍️ ショップ</h2>
+        <span class="hint">ポイントで購入</span>
+      </div>
+      <div id="shopList"></div>
+    </section>
+  </div>
 
   <!-- ===== ZUKAN SCREEN ===== -->
   <div class="zukan-screen">
@@ -576,6 +697,7 @@ body::before{
   <!-- footer tabs -->
   <nav class="tabs">
     <button class="tab-btn active" data-tab="home"><span class="ic">🏠</span>ホーム</button>
+    <button class="tab-btn" data-tab="shop"><span class="ic">🛍️</span>ショップ</button>
     <button class="tab-btn" data-tab="zukan"><span class="ic">📖</span>ずかん</button>
   </nav>
 </div>
@@ -606,47 +728,83 @@ const CATS = [
   {lv:10, name:'ライオン（幻）',emoji:'🦁', rate:600, color:'#f4b740'},
 ];
 
-const GRID_SIZE = 16;
-const SUMMON_BASE_COST = 10;
+const GRID_BASE = 16;
+const GRID_EXPANDED = 25;
 
-/* ============ State ============ */
-let state = load() || {
-  points: 30,
-  grid: Array(GRID_SIZE).fill(null),  // each cell: {lv}
-  course: [],                          // [{lv, dur, id}]
-  summonCost: SUMMON_BASE_COST,
-  maxUnlocked: 1,
-};
-
-const STORAGE_KEY = 'nyanko_house_v1';
-const OLD_KEY = 'nyanko_v1';
+const STORAGE_KEY = 'nyanko_house_v2';
+const OLD_KEY_V1 = 'nyanko_house_v1';
+const OLD_KEY_V0 = 'nyanko_v1';
 let isSummoning = false;
+
 function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) }
 function load(){
   try{
     let raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw){
-      // migrate old save once
-      const old = localStorage.getItem(OLD_KEY);
-      if (old){ raw = old; localStorage.setItem(STORAGE_KEY, old); localStorage.removeItem(OLD_KEY); }
+    if (raw) return JSON.parse(raw);
+    // migrate from older versions
+    const olderRaw = localStorage.getItem(OLD_KEY_V1) || localStorage.getItem(OLD_KEY_V0);
+    if (olderRaw){
+      const old = JSON.parse(olderRaw);
+      const migrated = {
+        version: 2,
+        cans: 3,
+        points: old.points || 0,
+        grid: old.grid && old.grid.length === GRID_BASE ? old.grid : Array(GRID_BASE).fill(null),
+        course: old.course || [],
+        maxUnlocked: old.maxUnlocked || 1,
+        expanded: false,
+        luckyCharm: 0,
+        speedUntil: 0,
+        lastBonusDate: '',
+        firstHintShown: !!((old.course && old.course.length > 0) || (old.grid && old.grid.some(c=>c))),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
     }
-    return raw ? JSON.parse(raw) : null;
+    return null;
   }catch(e){ return null }
+}
+
+/* ============ State ============ */
+let state = load() || {
+  version: 2,
+  cans: 3,
+  points: 0,
+  grid: Array(GRID_BASE).fill(null),
+  course: [],
+  maxUnlocked: 1,
+  expanded: false,
+  luckyCharm: 0,
+  speedUntil: 0,
+  lastBonusDate: '',
+  firstHintShown: false,
+};
+// ensure grid size matches expanded state
+const __targetSize = state.expanded ? GRID_EXPANDED : GRID_BASE;
+if (state.grid.length !== __targetSize){
+  const next = Array(__targetSize).fill(null);
+  state.grid.forEach((c,i)=>{ if (i < __targetSize) next[i] = c });
+  state.grid = next;
 }
 
 /* ============ Render ============ */
 const $grid = document.getElementById('grid');
 const $course = document.getElementById('course');
 const $pts = document.getElementById('pts');
+const $cans = document.getElementById('cans');
 const $costLbl = document.getElementById('costLbl');
 const $capacity = document.getElementById('capacity');
-const $emptyCourse = document.getElementById('emptyCourse');
+const $firstHint = document.getElementById('firstHint');
 const $tree = document.getElementById('tree');
+const $shopList = document.getElementById('shopList');
+const $speedBadge = document.getElementById('speedBadge');
+const $summonBtn = document.getElementById('summon');
 
 function catData(lv){ return CATS[lv-1] }
 
 function renderGrid(){
   $grid.innerHTML = '';
+  $grid.classList.toggle('expanded', state.expanded);
   state.grid.forEach((c, i) => {
     const cell = document.createElement('div');
     cell.className = 'cell' + (c ? ' has' : '');
@@ -663,7 +821,6 @@ function renderGrid(){
 
       n.addEventListener('dragstart', onDragStart);
       n.addEventListener('dragend', onDragEnd);
-      // touch
       n.addEventListener('touchstart', onTouchStart, {passive:false});
     }
 
@@ -675,13 +832,30 @@ function renderGrid(){
   });
 
   const empty = state.grid.filter(x => !x).length;
-  $capacity.textContent = `空き ${empty}/${GRID_SIZE}`;
+  $capacity.textContent = `空き ${empty}/${state.grid.length}`;
 }
 
 function renderHud(){
   $pts.textContent = Math.floor(state.points);
-  $costLbl.textContent = 'P ' + state.summonCost;
-  document.getElementById('summon').disabled = isSummoning || state.points < state.summonCost || state.grid.every(x => x);
+  $cans.textContent = state.cans;
+  $costLbl.textContent = '×1';
+  // summon button enabled if has can AND space AND not animating
+  $summonBtn.disabled = isSummoning || state.cans < 1 || state.grid.every(x => x);
+  $summonBtn.classList.toggle('has-charm', state.luckyCharm > 0);
+  // speed badge
+  const speedRemain = Math.ceil((state.speedUntil - Date.now())/1000);
+  if (speedRemain > 0){
+    $speedBadge.style.display = 'block';
+    $speedBadge.textContent = `⚡ ×2 ${speedRemain}s`;
+  } else {
+    $speedBadge.style.display = 'none';
+  }
+  // first hint: show only if coursesイベント once
+  if (!state.firstHintShown && state.course.length === 0){
+    $firstHint.style.display = 'flex';
+  } else {
+    $firstHint.style.display = 'none';
+  }
 }
 
 function renderTree(){
@@ -701,7 +875,6 @@ function renderTree(){
 function renderCourse(){
   // remove all runners
   $course.querySelectorAll('.runner').forEach(n => n.remove());
-  $emptyCourse.style.display = state.course.length ? 'none' : 'flex';
   state.course.forEach((c, i) => {
     const el = document.createElement('div');
     el.className = 'runner bounce';
@@ -716,6 +889,7 @@ function renderCourse(){
     el.addEventListener('touchstart', onCourseTouchStart, {passive:false});
     $course.appendChild(el);
   });
+  // first hint visibility is managed in renderHud
 }
 
 // course as drop target
@@ -872,6 +1046,7 @@ function moveGridToCourse(gridIdx){
   state.grid[gridIdx] = null;
   const dur = Math.max(4, 12 - cat.lv * 0.8);
   state.course.push({ lv: cat.lv, dur, id: Date.now()+Math.random() });
+  state.firstHintShown = true;
   toast(`${catData(cat.lv).name} がコースへ！`);
   save(); renderGrid(); renderHud(); renderCourse();
 }
@@ -949,42 +1124,50 @@ function spawnBurst(idx){
 
 function summon(){
   if (isSummoning) return;
-  if (state.points < state.summonCost) { toast('ポイントが足りない…'); return }
+  if (state.cans < 1) { toast('猫缶が足りない…'); return }
   const empty = state.grid.findIndex(x => !x);
   if (empty === -1) { toast('召喚エリアがいっぱい！'); return }
 
   isSummoning = true;
-  state.points -= state.summonCost;
+  state.cans -= 1;
+
+  // determine cat level: lucky charm guarantees Lv2, otherwise Lv1
+  let spawnLv = 1;
+  let usedCharm = false;
+  if (state.luckyCharm > 0){
+    state.luckyCharm -= 1;
+    spawnLv = 2;
+    usedCharm = true;
+  }
   renderHud();
 
-  // rare flash (1% chance) — foreshadow for legendary
-  const isRare = Math.random() < 0.01;
+  // rare flash (1% chance, or always with charm)
+  const isRare = usedCharm || Math.random() < 0.01;
   const $gacha = document.getElementById('gacha');
   const $rare = document.getElementById('gachaRare');
   const $catEmoji = document.getElementById('canCat');
-  $catEmoji.textContent = catData(1).emoji;
+  $catEmoji.textContent = catData(spawnLv).emoji;
   $rare.style.display = isRare ? 'block' : 'none';
-  // restart animations by reflow
   $gacha.classList.remove('show');
   void $gacha.offsetWidth;
   $gacha.classList.add('show');
 
-  // after animation, place cat
   setTimeout(()=>{
-    // re-find empty slot in case grid changed during animation
     const slot = state.grid.findIndex(x => !x);
     if (slot !== -1){
-      state.grid[slot] = { lv: 1 };
+      state.grid[slot] = { lv: spawnLv };
+      if (spawnLv > state.maxUnlocked) state.maxUnlocked = spawnLv;
     } else {
-      // refund if no space (shouldn't normally happen)
-      state.points += state.summonCost;
-      toast('召喚エリアがいっぱいになったよ。返金したよ');
+      // refund can
+      state.cans += 1;
+      if (usedCharm) state.luckyCharm += 1;
+      toast('召喚エリアがいっぱい。返金したよ');
     }
-    state.summonCost = Math.min(99, Math.round(SUMMON_BASE_COST + state.points/200));
     isSummoning = false;
-    save(); renderGrid(); renderHud();
+    save(); renderGrid(); renderHud(); renderTree();
     $gacha.classList.remove('show');
-    if (isRare) toast('✨ キラッ！ 何かの予感…');
+    if (usedCharm) toast('🍀 幸運の鈴で Lv2 が出現！');
+    else if (isRare) toast('✨ キラッ！ 何かの予感…');
   }, 1200);
 }
 
@@ -1012,15 +1195,25 @@ setInterval(()=>{
   const now = Date.now();
   const dt = (now - lastTick)/1000;
   lastTick = now;
-  if (!state.course.length) return;
-  // each cat earns rate/(dur) per second, roughly proportional to laps
+  // speed boost multiplier
+  const speedMul = state.speedUntil > now ? 2 : 1;
+  // adjust runner animation duration via CSS variable: scale down for speed
+  $course.querySelectorAll('.runner').forEach((el,i)=>{
+    const c = state.course[i];
+    if (!c) return;
+    const targetDur = c.dur / speedMul;
+    el.style.setProperty('--dur', targetDur + 's');
+  });
+  if (!state.course.length) {
+    if (speedMul === 1 && $speedBadge.style.display !== 'none') renderHud();
+    return;
+  }
   let gain = 0;
   state.course.forEach(c => {
     gain += catData(c.lv).rate / (c.dur*1.2);
   });
-  gain *= dt;
+  gain *= dt * speedMul;
   state.points += gain;
-  // throw coin pops occasionally
   if (Math.random() < dt * 0.8) {
     const pop = document.createElement('div');
     pop.className = 'coin-pop';
@@ -1031,7 +1224,6 @@ setInterval(()=>{
     setTimeout(()=>pop.remove(), 1000);
   }
   renderHud();
-  // save occasionally
   if (Math.random() < 0.02) save();
 }, 200);
 
@@ -1044,18 +1236,110 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
     const tab = btn.dataset.tab;
-    document.getElementById('app').classList.toggle('tab-zukan', tab === 'zukan');
+    document.getElementById('app').classList.remove('tab-zukan','tab-shop');
+    if (tab === 'zukan') document.getElementById('app').classList.add('tab-zukan');
+    if (tab === 'shop')  document.getElementById('app').classList.add('tab-shop');
+    if (tab === 'shop') renderShop();
   });
 });
+
+/* ============ Shop ============ */
+const SHOP_ITEMS = [
+  {
+    id:'speed',
+    name:'スピードアップ',
+    desc:'30秒間 コース速度2倍',
+    icon:'🐾',
+    price:50,
+    type:'consumable',
+    action: ()=>{
+      const now = Date.now();
+      const base = Math.max(now, state.speedUntil);
+      state.speedUntil = base + 30000;
+      toast('⚡ スピードアップ発動！');
+    }
+  },
+  {
+    id:'charm',
+    name:'幸運の鈴',
+    desc:'次の召喚で必ずLv2の猫',
+    icon:'🍀',
+    price:200,
+    type:'stockable',
+    action: ()=>{
+      state.luckyCharm += 1;
+      toast('🍀 幸運の鈴を入手！');
+    }
+  },
+  {
+    id:'expand',
+    name:'おうち拡張',
+    desc:'召喚エリアを 4×4 → 5×5 に',
+    icon:'🏠',
+    price:1000,
+    type:'oneTime',
+    isOwned: ()=> state.expanded,
+    action: ()=>{
+      state.expanded = true;
+      const next = Array(GRID_EXPANDED).fill(null);
+      state.grid.forEach((c,i)=>{ next[i] = c });
+      state.grid = next;
+      toast('🏠 おうちが広くなった！');
+    }
+  },
+];
+
+function renderShop(){
+  $shopList.innerHTML = '';
+  SHOP_ITEMS.forEach(item => {
+    const owned = item.isOwned && item.isOwned();
+    const canBuy = !owned && state.points >= item.price;
+    const row = document.createElement('div');
+    row.className = 'shop-item' + (owned ? ' owned' : '');
+    let stockHtml = '';
+    if (item.id === 'charm' && state.luckyCharm > 0) stockHtml = `<div class="stock">所持 ×${state.luckyCharm}</div>`;
+    row.innerHTML = `
+      <div class="si-ic">${item.icon}</div>
+      <div class="si-info">
+        <div class="si-name">${item.name}</div>
+        <div class="si-desc">${item.desc}</div>
+        ${stockHtml}
+      </div>
+      <button class="si-buy" ${owned||!canBuy?'disabled':''}>
+        ${owned ? '購入済' : '購入'}
+        <span class="price">P ${item.price}</span>
+      </button>
+    `;
+    row.querySelector('.si-buy').addEventListener('click', ()=>{
+      if (owned) return;
+      if (state.points < item.price){ toast('ポイントが足りない…'); return }
+      state.points -= item.price;
+      item.action();
+      save(); renderHud(); renderShop();
+      if (item.id === 'expand') renderGrid();
+    });
+    $shopList.appendChild(row);
+  });
+}
+
+/* ============ Login bonus ============ */
+function checkLoginBonus(){
+  const today = new Date();
+  const ymd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+  if (state.lastBonusDate !== ymd){
+    state.lastBonusDate = ymd;
+    state.points += 50;
+    save();
+    setTimeout(()=>toast('📅 ログインボーナス！ ポイント +50'), 600);
+  }
+}
 document.getElementById('rewardAd').addEventListener('click', ()=>{
   if (rewardCooldownUntil > Date.now()) return;
-  // simulate ad watch
   toast('（広告再生シミュレーション）');
   setTimeout(()=>{
     state.points += 50;
-    toast('にゃんこポイント +50！');
+    toast('ポイント +50！');
     save(); renderHud();
-    // start 30s cooldown
     rewardCooldownUntil = Date.now() + 30000;
     updateRewardButton();
   }, 800);
@@ -1081,7 +1365,19 @@ document.getElementById('mClose').addEventListener('click', ()=>{
 });
 
 /* init */
+function setAppHeight(){
+  document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px');
+}
+setAppHeight();
+window.addEventListener('resize', setAppHeight);
+window.addEventListener('orientationchange', setAppHeight);
+// iOS Safari toolbar reveal/hide
+if (window.visualViewport){
+  window.visualViewport.addEventListener('resize', setAppHeight);
+}
+
 renderGrid(); renderHud(); renderTree(); renderCourse();
+checkLoginBonus();
 </script>
 </body>
 </html>
