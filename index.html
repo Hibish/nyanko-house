@@ -52,8 +52,10 @@ body::before{
 
 .app{
   position:relative;z-index:1;
-  max-width:520px;margin:0 auto;padding:10px 14px 120px;
+  max-width:520px;margin:0 auto;padding:8px 12px 120px;
 }
+.app.tab-zukan .home-screen{display:none}
+.app:not(.tab-zukan) .zukan-screen{display:none}
 
 /* ===== Top ad banner ===== */
 .ad{
@@ -66,6 +68,7 @@ body::before{
   padding:10px;
   margin-bottom:10px;
 }
+.ad.top{display:none}
 .ad.bottom{
   position:fixed;left:0;right:0;bottom:0;
   max-width:520px;margin:0 auto;
@@ -74,38 +77,51 @@ body::before{
   height:56px;
 }
 
+/* ===== Footer tabs ===== */
+.tabs{
+  position:fixed;left:0;right:0;bottom:56px;
+  max-width:520px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  background:#fffaf2;
+  border-top:2px solid var(--ink);
+  z-index:6;
+  height:48px;
+}
+.tab-btn{
+  background:transparent;border:none;
+  font-family:inherit;font-weight:800;font-size:12px;
+  color:var(--brown-soft);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  cursor:pointer;
+  position:relative;
+  padding:0;
+}
+.tab-btn .ic{font-size:18px;line-height:1}
+.tab-btn.active{color:var(--pink-deep)}
+.tab-btn.active::before{
+  content:"";position:absolute;top:0;left:20%;right:20%;height:3px;
+  background:var(--pink);border-radius:0 0 3px 3px;
+}
+
 /* ===== Header ===== */
 .head{
-  display:flex;align-items:center;justify-content:space-between;
-  background:linear-gradient(180deg,#fffaf2,#fff1e0);
-  border:2px solid var(--ink);
-  border-radius:var(--radius);
-  padding:10px 14px;
-  box-shadow:var(--shadow);
-  margin-bottom:12px;
-}
-.logo{
-  font-family:'Mochiy Pop One',sans-serif;
-  font-size:20px;line-height:1;
-  color:var(--brown);
-  display:flex;align-items:center;gap:8px;
-}
-.logo small{
-  display:block;font-family:'M PLUS Rounded 1c';font-weight:800;
-  font-size:9px;letter-spacing:.25em;color:var(--pink-deep);margin-top:4px;
+  display:flex;align-items:center;justify-content:flex-end;
+  padding:4px 4px 8px;
+  margin-bottom:6px;
 }
 .points{
   display:flex;align-items:center;gap:6px;
   background:var(--ink);color:#fff;
-  padding:8px 12px;border-radius:999px;
-  font-weight:800;font-size:14px;
+  padding:6px 12px;border-radius:999px;
+  font-weight:800;font-size:13px;
   box-shadow:var(--inset);
+  border:2px solid var(--ink);
 }
 .points .coin{
-  width:20px;height:20px;border-radius:50%;
+  width:18px;height:18px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%,#ffe27a,#f4b740 60%,#c98a1d);
   display:inline-flex;align-items:center;justify-content:center;
-  font-size:10px;color:#7a4e0a;font-weight:800;
+  font-size:9px;color:#7a4e0a;font-weight:800;
 }
 
 /* ===== Course ===== */
@@ -115,27 +131,27 @@ body::before{
   border:2px solid var(--ink);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
-  padding:12px;
-  margin-bottom:12px;
+  padding:8px 10px 10px;
+  margin-bottom:8px;
   overflow:hidden;
 }
 .course-title{
   font-family:'Mochiy Pop One',sans-serif;
-  font-size:13px;color:var(--brown);
+  font-size:11px;color:var(--brown);
   display:flex;align-items:center;gap:6px;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 .course-title .tag{
-  background:var(--pink);color:#fff;font-weight:800;font-size:10px;
-  padding:3px 8px;border-radius:999px;letter-spacing:.1em;
+  background:var(--pink);color:#fff;font-weight:800;font-size:9px;
+  padding:2px 7px;border-radius:999px;letter-spacing:.1em;
 }
 .course{
   position:relative;
-  width:100%;height:150px;
+  width:100%;height:110px;
   background:
     radial-gradient(120px 30px at 50% 100%,rgba(0,0,0,.12),transparent 70%),
     repeating-linear-gradient(90deg,#a3d9c9 0 22px,#92ceba 22px 44px);
-  border-radius:16px;
+  border-radius:14px;
   border:2px solid var(--ink);
   overflow:hidden;
   transition:box-shadow .15s, border-color .15s;
@@ -146,13 +162,13 @@ body::before{
 }
 .course::before{
   /* track ring */
-  content:"";position:absolute;inset:18px;
+  content:"";position:absolute;inset:12px;
   border:3px dashed #fff;
   border-radius:80px;
   opacity:.75;
 }
 .runner{
-  position:absolute;font-size:30px;line-height:1;
+  position:absolute;font-size:26px;line-height:1;
   filter:drop-shadow(0 4px 0 rgba(0,0,0,.18));
   transform:translate(-50%,-50%);
   animation:run var(--dur,10s) linear infinite;
@@ -191,21 +207,21 @@ body::before{
   border:2px solid var(--ink);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
-  padding:12px;
-  margin-bottom:12px;
+  padding:10px;
+  margin-bottom:8px;
 }
 .panel-head{
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
 .panel-head h2{
   font-family:'Mochiy Pop One',sans-serif;
-  font-size:13px;color:var(--brown);
+  font-size:12px;color:var(--brown);
 }
 .hint{font-size:10px;color:var(--brown-soft)}
 
 .grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
 }
 .cell{
   aspect-ratio:1/1;
@@ -331,17 +347,17 @@ body::before{
 }
 .btn{
   border:2px solid var(--ink);
-  border-radius:18px;
-  padding:14px 12px;
+  border-radius:16px;
+  padding:11px 10px;
   font-family:inherit;font-weight:800;
-  font-size:14px;
+  font-size:13px;
   cursor:pointer;
-  box-shadow:0 5px 0 var(--ink);
+  box-shadow:0 4px 0 var(--ink);
   transition:transform .08s, box-shadow .08s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
   line-height:1.1;
 }
-.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn.reward:disabled{
   background:linear-gradient(90deg,#e8d9b9,#c8b787);
@@ -380,6 +396,12 @@ body::before{
   scrollbar-width:none;
 }
 .tree::-webkit-scrollbar{display:none}
+.zukan-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.zukan-grid .tier{width:auto;padding:10px 6px}
+.zukan-grid .tier .e{font-size:36px}
+.zukan-grid .tier .n{font-size:11px;margin-top:6px}
 .tier{
   flex:0 0 auto;
   width:56px;text-align:center;
@@ -447,25 +469,21 @@ body::before{
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
 
   <!-- top ad placeholder -->
-  <div class="ad" id="adTop">［広告スペース／AdSense 上部バナー］</div>
+  <div class="ad top" id="adTop">［広告スペース／AdSense 上部バナー］</div>
 
   <!-- header -->
   <header class="head">
-    <div class="logo">
-      🐾
-      <div>
-        にゃんこハウス
-        <small>NYANKO HOUSE</small>
-      </div>
-    </div>
     <div class="points" title="にゃんこポイント">
       <span class="coin">P</span>
       <span id="pts">0</span>
     </div>
   </header>
+
+  <!-- ===== HOME SCREEN ===== -->
+  <div class="home-screen">
 
   <!-- course -->
   <section class="course-wrap">
@@ -482,17 +500,13 @@ body::before{
   <section class="panel">
     <div class="panel-head">
       <h2>🐱 召喚エリア</h2>
-      <span class="hint">同じ猫を重ねてマージ／コースへドラッグも可</span>
+      <span class="hint" id="capacity">空き 16/16</span>
     </div>
     <div class="grid" id="grid"></div>
   </section>
 
   <!-- controls -->
   <section class="panel">
-    <div class="panel-head">
-      <h2>🥫 アクション</h2>
-      <span class="hint" id="capacity">空き 16/16</span>
-    </div>
     <div class="controls">
       <button class="btn primary" id="summon">
         <span class="can">🥫</span>
@@ -508,14 +522,18 @@ body::before{
     </div>
   </section>
 
-  <!-- collection -->
-  <section class="panel">
-    <div class="panel-head">
-      <h2>📖 ずかん</h2>
-      <span class="hint">10段階の進化</span>
-    </div>
-    <div class="tree" id="tree"></div>
-  </section>
+  </div><!-- /home-screen -->
+
+  <!-- ===== ZUKAN SCREEN ===== -->
+  <div class="zukan-screen">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>📖 ずかん</h2>
+        <span class="hint">10段階の進化</span>
+      </div>
+      <div class="zukan-grid" id="tree"></div>
+    </section>
+  </div>
 
   <!-- toast -->
   <div class="toast" id="toast">ok</div>
@@ -532,6 +550,12 @@ body::before{
 
   <!-- bottom ad placeholder -->
   <div class="ad bottom" id="adBottom">［広告スペース／AdSense 下部バナー 320×50〕</div>
+
+  <!-- footer tabs -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="home"><span class="ic">🏠</span>ホーム</button>
+    <button class="tab-btn" data-tab="zukan"><span class="ic">📖</span>ずかん</button>
+  </nav>
 </div>
 
 <!-- level up modal -->
@@ -992,6 +1016,15 @@ setInterval(()=>{
 /* ============ Events ============ */
 document.getElementById('summon').addEventListener('click', summon);
 document.getElementById('send').addEventListener('click', sendToCourse);
+
+// footer tabs
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    const tab = btn.dataset.tab;
+    document.getElementById('app').classList.toggle('tab-zukan', tab === 'zukan');
+  });
+});
 document.getElementById('rewardAd').addEventListener('click', ()=>{
   if (rewardCooldownUntil > Date.now()) return;
   // simulate ad watch
