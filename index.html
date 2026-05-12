@@ -2,7 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="にゃんこハウス">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffe2ec">
 <title>にゃんこハウス｜NYANKO HOUSE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +31,8 @@
   --radius:22px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html,body{height:100%;overflow-x:hidden}
+html{overscroll-behavior:none}
 body{
   font-family:'M PLUS Rounded 1c','Kosugi Maru',system-ui,sans-serif;
   color:var(--ink);
@@ -53,8 +59,8 @@ body::before{
 .app{
   position:relative;z-index:1;
   max-width:520px;margin:0 auto;padding:8px 12px;
-  min-height:calc(100vh - 104px);
-  padding-bottom:120px;
+  min-height:calc(100dvh - 104px - env(safe-area-inset-bottom));
+  padding-bottom:calc(120px + env(safe-area-inset-bottom));
 }
 .app.tab-zukan .home-screen{display:none}
 .app:not(.tab-zukan) .zukan-screen{display:none}
@@ -81,11 +87,13 @@ body::before{
   background:#fff;
   border:1.5px dashed var(--brown-soft);
   margin:0;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-sizing:content-box;
 }
 
 /* ===== Footer tabs ===== */
 .tabs{
-  position:fixed;left:50%;bottom:56px;
+  position:fixed;left:50%;bottom:calc(56px + env(safe-area-inset-bottom));
   transform:translateX(-50%);
   width:100%;max-width:520px;
   display:grid;grid-template-columns:1fr 1fr;
