@@ -138,6 +138,11 @@ body::before{
   border-radius:16px;
   border:2px solid var(--ink);
   overflow:hidden;
+  transition:box-shadow .15s, border-color .15s;
+}
+.course.drop-target{
+  border-color:var(--pink);
+  box-shadow:inset 0 0 0 4px rgba(255,143,171,.35);
 }
 .course::before{
   /* track ring */
@@ -152,7 +157,9 @@ body::before{
   transform:translate(-50%,-50%);
   animation:run var(--dur,10s) linear infinite;
   offset-rotate:0deg;
+  cursor:grab;
 }
+.runner.dragging{cursor:grabbing;opacity:.5}
 @keyframes run{
   0%   {left:10%; top:50%;}
   25%  {left:50%; top:12%;}
@@ -475,7 +482,7 @@ body::before{
   <section class="panel">
     <div class="panel-head">
       <h2>🐱 召喚エリア</h2>
-      <span class="hint">同じ猫をドラッグで重ねるとマージ</span>
+      <span class="hint">同じ猫を重ねてマージ／コースへドラッグも可</span>
     </div>
     <div class="grid" id="grid"></div>
   </section>
@@ -567,6 +574,7 @@ let state = load() || {
 
 const STORAGE_KEY = 'nyanko_house_v1';
 const OLD_KEY = 'nyanko_v1';
+let isSummoning = false;
 function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) }
 function load(){
   try{
@@ -627,7 +635,7 @@ function renderGrid(){
 function renderHud(){
   $pts.textContent = Math.floor(state.points);
   $costLbl.textContent = 'P ' + state.summonCost;
-  document.getElementById('summon').disabled = state.points < state.summonCost || state.grid.every(x => x);
+  document.getElementById('summon').disabled = isSummoning || state.points < state.summonCost || state.grid.every(x => x);
 }
 
 function renderTree(){
@@ -654,9 +662,29 @@ function renderCourse(){
     el.style.setProperty('--dur', c.dur + 's');
     el.style.animationDelay = `-${(i * 1.5) % c.dur}s`;
     el.textContent = catData(c.lv).emoji;
+    el.dataset.courseIdx = i;
+    el.draggable = true;
+    el.title = 'ドラッグで召喚エリアに戻せる';
+    el.addEventListener('dragstart', onCourseDragStart);
+    el.addEventListener('dragend', onDragEnd);
+    el.addEventListener('touchstart', onCourseTouchStart, {passive:false});
     $course.appendChild(el);
   });
 }
+
+// course as drop target
+$course.addEventListener('dragover', e => {
+  e.preventDefault();
+  if (dragFrom !== null && state.course.length < 5) $course.classList.add('drop-target');
+});
+$course.addEventListener('dragleave', () => $course.classList.remove('drop-target'));
+$course.addEventListener('drop', e => {
+  e.preventDefault();
+  $course.classList.remove('drop-target');
+  if (dragFrom === null) return;
+  moveGridToCourse(dragFrom);
+  dragFrom = null;
+});
 
 /* ============ Helpers ============ */
 function shade(hex, pct){
@@ -677,6 +705,8 @@ function toast(msg){
 
 /* ============ Drag & drop ============ */
 let dragFrom = null;
+let dragFromCourse = null;
+let touchDragCourse = null;
 
 function onDragStart(e){
   dragFrom = +e.currentTarget.dataset.idx;
@@ -684,13 +714,22 @@ function onDragStart(e){
   e.dataTransfer.setData('text/plain', dragFrom);
   e.dataTransfer.effectAllowed = 'move';
 }
-function onDragEnd(e){ e.currentTarget.classList.remove('dragging') }
+function onDragEnd(e){
+  e.currentTarget.classList.remove('dragging');
+  // clear after a tick so drop handlers run first
+  setTimeout(()=>{ dragFromCourse = null; }, 0);
+}
 
 function onDrop(e){
   e.preventDefault();
   const cell = e.currentTarget;
   cell.classList.remove('drop');
   const to = +cell.dataset.idx;
+  if (dragFromCourse !== null){
+    moveCourseToGrid(dragFromCourse);
+    dragFromCourse = null;
+    return;
+  }
   if (dragFrom === null || to === dragFrom) return;
   handleMove(dragFrom, to);
   dragFrom = null;
@@ -718,9 +757,14 @@ function onTouchStart(e){
     clone.style.top  = (t.clientY - clone.offsetHeight/2) + 'px';
     const el2 = document.elementFromPoint(t.clientX, t.clientY);
     document.querySelectorAll('.cell.drop').forEach(c=>c.classList.remove('drop'));
+    $course.classList.remove('drop-target');
     if (el2){
       const cell = el2.closest('.cell');
-      if (cell) cell.classList.add('drop');
+      if (cell) {
+        cell.classList.add('drop');
+      } else if (el2.closest('#course') || el2.closest('.course-wrap')) {
+        if (state.course.length < 5) $course.classList.add('drop-target');
+      }
     }
   };
   const end = ev => {
@@ -729,11 +773,15 @@ function onTouchStart(e){
     const t = ev.changedTouches[0];
     const el2 = document.elementFromPoint(t.clientX, t.clientY);
     const cell = el2 && el2.closest('.cell');
+    const courseHit = el2 && (el2.closest('#course') || el2.closest('.course-wrap'));
     document.querySelectorAll('.cell.drop').forEach(c=>c.classList.remove('drop'));
+    $course.classList.remove('drop-target');
     clone.remove();
     if (cell){
       const to = +cell.dataset.idx;
       if (to !== touchDrag.from) handleMove(touchDrag.from, to);
+    } else if (courseHit){
+      moveGridToCourse(touchDrag.from);
     }
     touchDrag = null;
   };
@@ -771,6 +819,71 @@ function handleMove(from, to){
   save(); renderGrid(); renderHud(); renderTree();
 }
 
+function moveGridToCourse(gridIdx){
+  const cat = state.grid[gridIdx];
+  if (!cat) return;
+  if (state.course.length >= 5){ toast('コースは5匹までだよ'); return }
+  state.grid[gridIdx] = null;
+  const dur = Math.max(4, 12 - cat.lv * 0.8);
+  state.course.push({ lv: cat.lv, dur, id: Date.now()+Math.random() });
+  toast(`${catData(cat.lv).name} がコースへ！`);
+  save(); renderGrid(); renderHud(); renderCourse();
+}
+
+function moveCourseToGrid(courseIdx){
+  const cat = state.course[courseIdx];
+  if (!cat) return;
+  const empty = state.grid.findIndex(x => !x);
+  if (empty === -1){ toast('召喚エリアに空きがないよ'); return }
+  state.course.splice(courseIdx, 1);
+  state.grid[empty] = { lv: cat.lv };
+  toast(`${catData(cat.lv).name} がもどってきた`);
+  save(); renderGrid(); renderHud(); renderCourse();
+}
+
+// course runner drag start
+function onCourseDragStart(e){
+  const idx = +e.currentTarget.dataset.courseIdx;
+  dragFromCourse = idx;
+  e.dataTransfer.setData('text/plain', 'course:'+idx);
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.classList.add('dragging');
+}
+
+function onCourseTouchStart(e){
+  e.preventDefault();
+  const el = e.currentTarget;
+  const idx = +el.dataset.courseIdx;
+  const clone = el.cloneNode(true);
+  clone.style.position = 'fixed';
+  clone.style.pointerEvents = 'none';
+  clone.style.zIndex = 100;
+  clone.style.animation = 'none';
+  clone.style.left = '-9999px';
+  document.body.appendChild(clone);
+  touchDragCourse = {from:idx, clone};
+
+  const move = ev => {
+    const t = ev.touches[0];
+    clone.style.left = (t.clientX - 20) + 'px';
+    clone.style.top  = (t.clientY - 20) + 'px';
+  };
+  const end = ev => {
+    document.removeEventListener('touchmove', move);
+    document.removeEventListener('touchend', end);
+    const t = ev.changedTouches[0];
+    const el2 = document.elementFromPoint(t.clientX, t.clientY);
+    clone.remove();
+    // if dropped over grid (any cell), return to grid
+    const cell = el2 && el2.closest('.cell');
+    if (cell) moveCourseToGrid(touchDragCourse.from);
+    touchDragCourse = null;
+  };
+  document.addEventListener('touchmove', move, {passive:false});
+  document.addEventListener('touchend', end);
+  move(e);
+}
+
 function spawnBurst(idx){
   const cell = $grid.children[idx];
   const b = document.createElement('div');
@@ -789,14 +902,12 @@ function spawnBurst(idx){
 }
 
 function summon(){
+  if (isSummoning) return;
   if (state.points < state.summonCost) { toast('ポイントが足りない…'); return }
   const empty = state.grid.findIndex(x => !x);
   if (empty === -1) { toast('召喚エリアがいっぱい！'); return }
-  // disable button during animation
-  const $sum = document.getElementById('summon');
-  if ($sum.disabled) return;
-  $sum.disabled = true;
 
+  isSummoning = true;
   state.points -= state.summonCost;
   renderHud();
 
@@ -814,8 +925,17 @@ function summon(){
 
   // after animation, place cat
   setTimeout(()=>{
-    state.grid[empty] = { lv: 1 };
+    // re-find empty slot in case grid changed during animation
+    const slot = state.grid.findIndex(x => !x);
+    if (slot !== -1){
+      state.grid[slot] = { lv: 1 };
+    } else {
+      // refund if no space (shouldn't normally happen)
+      state.points += state.summonCost;
+      toast('召喚エリアがいっぱいになったよ。返金したよ');
+    }
     state.summonCost = Math.min(99, Math.round(SUMMON_BASE_COST + state.points/200));
+    isSummoning = false;
     save(); renderGrid(); renderHud();
     $gacha.classList.remove('show');
     if (isRare) toast('✨ キラッ！ 何かの予感…');
@@ -823,18 +943,11 @@ function summon(){
 }
 
 function sendToCourse(){
-  // pick highest-Lv cat from grid and put on course (max 5)
   if (state.course.length >= 5){ toast('コースは5匹までだよ'); return }
   let bestIdx = -1, bestLv = 0;
   state.grid.forEach((c,i)=>{ if (c && c.lv > bestLv){ bestLv = c.lv; bestIdx = i } });
   if (bestIdx === -1){ toast('召喚エリアに猫がいないよ'); return }
-  const cat = state.grid[bestIdx];
-  state.grid[bestIdx] = null;
-  // duration: higher lv -> faster
-  const dur = Math.max(4, 12 - cat.lv * 0.8);
-  state.course.push({ lv: cat.lv, dur, id: Date.now()+Math.random() });
-  toast(`${catData(cat.lv).name} がコースへ！`);
-  save(); renderGrid(); renderHud(); renderCourse();
+  moveGridToCourse(bestIdx);
 }
 
 function showLevelUp(lv){
