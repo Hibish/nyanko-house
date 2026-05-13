@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="にゃんこDeploy">
+<title>にゃんこ Deploy</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Hiragino Kaku Gothic Pro', 'Noto Sans JP', sans-serif;
+    background: linear-gradient(135deg, #fdf6ec 0%, #fce4ec 100%);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  .header {
+    background: linear-gradient(90deg, #ff8a65, #ff5252);
+    color: white;
+    padding: 52px 20px 16px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(255,82,82,0.25);
+  }
+  .header h1 { font-size: 20px; font-weight: 800; }
+  .header p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+  .card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 24px 20px;
+    margin: 20px 16px;
+  }
+  .emoji { font-size: 48px; text-align: center; display: block; margin-bottom: 12px; }
+  h2 { font-size: 16px; font-weight: 800; color: #333; margin-bottom: 4px; }
+  .desc { font-size: 13px; color: #888; margin-bottom: 16px; }
+  label { font-size: 13px; font-weight: 700; color: #555; display: block; margin-bottom: 6px; }
+  input, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #eee;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.2s;
+  }
+  input:focus, textarea:focus { border-color: #ff8a65; }
+  textarea { resize: vertical; min-height: 100px; }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(90deg, #ff8a65, #ff5252);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 16px;
+    box-shadow: 0 3px 12px rgba(255,82,82,0.3);
+    font-family: inherit;
+  }
+  .btn:disabled { opacity: 0.5; }
+  .btn-secondary {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1.5px solid #ff8a65;
+    background: white;
+    color: #ff5252;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: inherit;
+  }
+  .badge {
+    display: inline-block;
+    background: #fff3e0;
+    color: #e65100;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .file-item {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #f0f0f0;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .file-item:active { background: #fff0eb; border-color: #ff8a65; }
+  .code-box {
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 11px;
+    color: #a8d8ea;
+    overflow-x: auto;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin-top: 12px;
+    font-family: monospace;
+  }
+  .log-box {
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 13px;
+    color: #444;
+    margin-top: 12px;
+    line-height: 2;
+  }
+  .note { font-size: 11px; color: #aaa; margin-top: 8px; line-height: 1.6; }
+  .token-row { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .token-status { font-size: 12px; color: #4caf50; font-weight: 700; }
+  #app > div { display: none; }
+  #app > div.active { display: block; }
+  .spinner { 
+    display: inline-block; width: 20px; height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🐱 にゃんこ Deploy</h1>
+  <p>指示するだけでGitHub → Vercel自動反映</p>
+</div>
+
+<div id="app">
+  <!-- TOKEN SCREEN -->
+  <div id="screen-token" class="active">
+    <div class="card">
+      <span class="emoji">🔑</span>
+      <h2>GitHub Token を設定</h2>
+      <p class="desc">一度入力すると次回から不要です</p>
+      <label>Personal Access Token</label>
+      <input type="password" id="token-input" placeholder="github_pat_xxxxx">
+      <p class="note">
+        GitHub → Settings → Developer settings<br>
+        → Personal access tokens → Fine-grained tokens<br>
+        で作成。<strong>Contents: Read & Write</strong> 権限が必要です。
+      </p>
+      <button class="btn" onclick="saveToken()">保存して接続する 🐱</button>
+    </div>
+  </div>
+
+  <!-- HOME SCREEN -->
+
+  <div id="screen-home">
+    <div class="card">
+      <span class="emoji">🐾</span>
+      <h2>nyanko-house デプロイエージェント</h2>
+      <p class="desc">修正したいファイルを選んで、指示を出すだけ！</p>
+      <div class="badge">✅ Hibish/nyanko-house に接続済み</div>
+      <button class="btn" onclick="goSelectFile()">ファイルを選んで修正する 🛠️</button>
+      <button class="btn-secondary" onclick="clearToken()">🔑 Tokenを変更する</button>
+    </div>
+  </div>
+
+  <!-- SELECT FILE SCREEN -->
+
+  <div id="screen-files">
+    <div class="card">
+      <span class="emoji">📁</span>
+      <h2>ファイルを選択</h2>
+      <p class="desc">修正したいファイルをタップ</p>
+      <div id="file-list"></div>
+      <button class="btn-secondary" onclick="showScreen('home')">← 戻る</button>
+    </div>
+  </div>
+
+  <!-- INSTRUCT SCREEN -->
+
+  <div id="screen-instruct">
+    <div class="card">
+      <span class="emoji">✏️</span>
+      <h2>修正内容を入力</h2>
+      <div class="badge" id="selected-file-badge">📄 </div>
+      <label>どう変更したいですか？（日本語でOK）</label>
+      <textarea id="instruction-input" placeholder="例：ゲームタイトルのフォントを大きくして、背景色をピンクにしてほしい"></textarea>
+      <button class="btn" onclick="generateCode()" id="generate-btn">Claudeにコード生成させる 🤖</button>
+      <button class="btn-secondary" onclick="showScreen('files')">← ファイル選択に戻る</button>
+    </div>
+  </div>
+
+  <!-- GENERATING SCREEN -->
+
+  <div id="screen-generating">
+    <div class="card">
+      <span class="emoji">⚙️</span>
+      <h2>生成中...</h2>
+      <div class="log-box" id="gen-log"></div>
+    </div>
+  </div>
+
+  <!-- CONFIRM SCREEN -->
+
+  <div id="screen-confirm">
+    <div class="card">
+      <span class="emoji">👀</span>
+      <h2>内容を確認してください</h2>
+      <div class="badge" id="commit-msg-badge">📝 </div>
+      <label>生成されたコード（プレビュー）</label>
+      <div class="code-box" id="code-preview"></div>
+      <button class="btn" onclick="pushToGitHub()">✅ このままGitHubにpushする</button>
+      <button class="btn-secondary" onclick="showScreen('instruct')">← やり直す</button>
+    </div>
+  </div>
+
+  <!-- PUSHING SCREEN -->
+
+  <div id="screen-pushing">
+    <div class="card">
+      <span class="emoji">🚀</span>
+      <h2>デプロイ中...</h2>
+      <div class="log-box" id="push-log"></div>
+    </div>
+  </div>
+
+  <!-- DONE SCREEN -->
+
+  <div id="screen-done">
+    <div class="card">
+      <span class="emoji">🎉</span>
+      <h2>デプロイ完了！</h2>
+      <div class="log-box" id="done-log"></div>
+      <p class="note" style="margin-top:12px;">数分でVercelに反映されます🐾</p>
+      <button class="btn" onclick="resetToHome()">別の修正をする</button>
+    </div>
+  </div>
+
+  <!-- ERROR SCREEN -->
+
+  <div id="screen-error">
+    <div class="card">
+      <span class="emoji">😿</span>
+      <h2>エラーが発生しました</h2>
+      <div class="log-box" id="error-msg" style="color:#c62828;"></div>
+      <button class="btn" onclick="resetToHome()">← ホームに戻る</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const OWNER = "Hibish";
+const REPO  = "nyanko-house";
+const BRANCH = "main";
+
+let selectedFile = "";
+let fileContent  = "";
+let fileSha      = "";
+let generatedCode = "";
+let commitMessage  = "";
+
+// ── helpers ──────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll("#app > div").forEach(d => d.classList.remove("active"));
+  document.getElementById("screen-" + name).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+function addLog(logId, msg) {
+  const el = document.getElementById(logId);
+  el.innerHTML += msg + "<br>";
+}
+
+function token() { return localStorage.getItem("gh_token") || ""; }
+
+function ghHeaders() {
+  return { "Authorization": "token " + token(), "Content-Type": "application/json" };
+}
+
+// ── token ────────────────────────────────────
+function saveToken() {
+  const t = document.getElementById("token-input").value.trim();
+  if (!t) return alert("Tokenを入力してください");
+  localStorage.setItem("gh_token", t);
+  showScreen("home");
+}
+
+function clearToken() {
+  localStorage.removeItem("gh_token");
+  showScreen("token");
+}
+
+// ── file list ────────────────────────────────
+async function goSelectFile() {
+  showScreen("files");
+  const list = document.getElementById("file-list");
+  list.innerHTML = "<p style='color:#aaa;font-size:13px;'>読み込み中...</p>";
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`,
+      { headers: ghHeaders() }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    const files = data.tree
+      .filter(f => f.type === "blob" && /\.(html|css|js|json)$/.test(f.path))
+      .map(f => f.path);
+    list.innerHTML = "";
+    files.forEach(path => {
+      const icon = path.endsWith(".html") ? "🌐" : path.endsWith(".css") ? "🎨" : path.endsWith(".js") ? "⚡" : "📄";
+      const div = document.createElement("div");
+      div.className = "file-item";
+      div.innerHTML = `<span>${icon}</span><span>${path}</span>`;
+      div.onclick = () => selectFile(path);
+      list.appendChild(div);
+    });
+  } catch(e) {
+    showError("ファイル一覧の取得に失敗しました: " + e.message);
+  }
+}
+
+async function selectFile(path) {
+  selectedFile = path;
+  document.getElementById("selected-file-badge").textContent = "📄 " + path;
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`,
+      { headers: ghHeaders() }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    fileContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
+    fileSha = data.sha;
+    document.getElementById("instruction-input").value = "";
+    showScreen("instruct");
+  } catch(e) {
+    showError("ファイル取得失敗: " + e.message);
+  }
+}
+
+// ── generate ─────────────────────────────────
+async function generateCode() {
+  const instruction = document.getElementById("instruction-input").value.trim();
+  if (!instruction) return;
+  showScreen("generating");
+  document.getElementById("gen-log").innerHTML = "";
+  addLog("gen-log", "🤖 Claudeがコードを生成中...");
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: `あなたはnyanko-houseという猫マージ放置ゲームのコード修正エージェントです。
+ユーザーの指示に従い既存ファイルを修正してください。
+返答はJSON形式のみ。以下の形式で返してください：
+{"code":"修正後のコード全文","commit_message":"変更内容の短い説明（英語）"}
+前置きや説明は不要です。JSONのみ返してください。`,
+        messages: [{
+          role: "user",
+          content: `【対象ファイル】${selectedFile}\n\n【現在のコード】\n${fileContent.slice(0, 6000)}\n\n【修正指示】\n${instruction}`
+        }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || "";
+    const clean = raw.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(clean);
+    generatedCode = parsed.code;
+    commitMessage = parsed.commit_message;
+    addLog("gen-log", "✅ コード生成完了！");
+    document.getElementById("commit-msg-badge").textContent = "📝 " + commitMessage;
+    document.getElementById("code-preview").textContent = generatedCode.slice(0, 800) + (generatedCode.length > 800 ? "\n..." : "");
+    showScreen("confirm");
+  } catch(e) {
+    showError("コード生成失敗: " + e.message);
+  }
+}
+
+// ── push ─────────────────────────────────────
+async function pushToGitHub() {
+  showScreen("pushing");
+  document.getElementById("push-log").innerHTML = "";
+  addLog("push-log", "📦 GitHubにpush中...");
+  try {
+    // Re-fetch SHA in case it changed
+    const checkRes = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${selectedFile}?ref=${BRANCH}`,
+      { headers: ghHeaders() }
+    );
+    const checkData = await checkRes.json();
+    const sha = checkData.sha;
+
+    const encoded = btoa(unescape(encodeURIComponent(generatedCode)));
+    const res = await fetch(
+      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${selectedFile}`,
+      {
+        method: "PUT",
+        headers: ghHeaders(),
+        body: JSON.stringify({ message: commitMessage, content: encoded, sha, branch: BRANCH })
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    addLog("push-log", "✅ GitHubへのpush完了！");
+    addLog("push-log", "🚀 Vercelが自動デプロイ開始...");
+    document.getElementById("done-log").innerHTML = document.getElementById("push-log").innerHTML;
+    showScreen("done");
+  } catch(e) {
+    showError("push失敗: " + e.message);
+  }
+}
+
+function showError(msg) {
+  document.getElementById("error-msg").textContent = msg;
+  showScreen("error");
+}
+
+function resetToHome() { showScreen("home"); }
+
+// ── init ─────────────────────────────────────
+window.onload = () => {
+  if (token()) {
+    showScreen("home");
+  } else {
+    showScreen("token");
+  }
+};
+</script>
+
+</body>
+</html>
