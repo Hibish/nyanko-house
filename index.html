@@ -593,6 +593,47 @@ body::before{
   .head{padding:8px 10px}
   .logo{font-size:17px}
 }
+/* ===== Can Recovery Timer ===== */
+.cans-timer{
+  font-size:9px;color:var(--brown-soft);margin-left:1px;
+  font-weight:700;letter-spacing:-.02em;white-space:nowrap;
+}
+/* ===== Tutorial Glow ===== */
+@keyframes tutorialPulse{
+  0%,100%{box-shadow:0 4px 0 var(--ink),0 0 0 0 rgba(255,143,171,.6)}
+  50%{box-shadow:0 4px 0 var(--ink),0 0 0 14px rgba(255,143,171,0)}
+}
+.btn.tutorial-glow{
+  animation:tutorialPulse 1.2s ease-in-out infinite;
+}
+/* ===== Course needs-cat pulse ===== */
+@keyframes courseNeedsCat{
+  0%,100%{border-color:var(--pink);box-shadow:inset 0 0 0 0 rgba(255,143,171,0)}
+  50%{border-color:var(--pink-deep);box-shadow:inset 0 0 0 4px rgba(255,143,171,.25)}
+}
+.course.needs-cat{
+  animation:courseNeedsCat 1.4s ease-in-out infinite;
+}
+/* ===== Zukan horizontal scroll ===== */
+.zukan-scroll{
+  display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.zukan-scroll::-webkit-scrollbar{display:none}
+.zukan-progress{
+  font-size:11px;color:var(--brown-soft);font-weight:700;margin-bottom:6px;
+}
+.zukan-progress-bar{
+  height:6px;background:rgba(91,58,41,.12);border-radius:999px;margin-bottom:8px;overflow:hidden;
+}
+.zukan-progress-bar-fill{
+  height:100%;background:linear-gradient(90deg,var(--pink),var(--gold));
+  border-radius:999px;transition:width .4s ease;
+}
+.tier .tier-rate{
+  font-size:8px;color:var(--brown-soft);margin-top:2px;font-weight:700;
+}
 </style>
 </head>
 <body>
@@ -606,6 +647,7 @@ body::before{
     <div class="currency cans" title="猫缶">
       <span class="ic">🥫</span>
       <span id="cans">3</span>
+      <span class="cans-timer" id="cansTimer"></span>
     </div>
     <div class="points" title="にゃんこポイント">
       <span class="coin">P</span>
@@ -649,7 +691,7 @@ body::before{
         🐾 コースへ送る
       </button>
       <button class="btn reward" id="rewardAd">
-        🎁 動画を見てポイント +50
+        🎁 動画を見て 🥫×2 ゲット
       </button>
     </div>
   </section>
@@ -672,9 +714,10 @@ body::before{
     <section class="panel">
       <div class="panel-head">
         <h2>📖 ずかん</h2>
-        <span class="hint">10段階の進化</span>
+        <span class="hint" id="zukanHint">0 / 10 解放</span>
       </div>
-      <div class="zukan-grid" id="tree"></div>
+      <div class="zukan-progress-bar"><div class="zukan-progress-bar-fill" id="zukanBar" style="width:0%"></div></div>
+      <div class="zukan-scroll" id="tree"></div>
     </section>
   </div>
 
@@ -702,6 +745,17 @@ body::before{
   </nav>
 </div>
 
+<!-- login bonus modal -->
+<div class="modal" id="bonusModal">
+  <div class="card">
+    <div style="font-size:10px;letter-spacing:.2em;color:var(--pink-deep);font-weight:800">DAILY BONUS!</div>
+    <h3>おかえり！</h3>
+    <div class="big">📅</div>
+    <p>🥫×3 ＋ 100P ゲット！</p>
+    <button class="btn primary" id="bonusClose">あそぶ</button>
+  </div>
+</div>
+
 <!-- level up modal -->
 <div class="modal" id="modal">
   <div class="card">
@@ -716,16 +770,16 @@ body::before{
 <script>
 /* ============ Data ============ */
 const CATS = [
-  {lv:1,  name:'子猫',          emoji:'🐱', rate:1,   color:'#ffd6a5'},
-  {lv:2,  name:'茶トラ',        emoji:'🐈', rate:2,   color:'#e9a06b'},
-  {lv:3,  name:'サバトラ',      emoji:'😺', rate:4,   color:'#b9c4cc'},
-  {lv:4,  name:'三毛猫',        emoji:'😸', rate:8,   color:'#f6c177'},
-  {lv:5,  name:'キジトラ',      emoji:'😻', rate:16,  color:'#a78760'},
-  {lv:6,  name:'ロシアンブルー',emoji:'😽', rate:32,  color:'#8fb5d1'},
-  {lv:7,  name:'ペルシャ',      emoji:'🙀', rate:64,  color:'#ffe9d4'},
-  {lv:8,  name:'メインクーン',  emoji:'😼', rate:128, color:'#c79b6f'},
-  {lv:9,  name:'スコティッシュ',emoji:'🐈‍⬛', rate:256, color:'#5b4a44'},
-  {lv:10, name:'ライオン（幻）',emoji:'🦁', rate:600, color:'#f4b740'},
+  {lv:1,  name:'子猫',          emoji:'🐱', rate:3,    color:'#ffd6a5'},
+  {lv:2,  name:'茶トラ',        emoji:'🐈', rate:7,    color:'#e9a06b'},
+  {lv:3,  name:'サバトラ',      emoji:'😺', rate:15,   color:'#b9c4cc'},
+  {lv:4,  name:'三毛猫',        emoji:'😸', rate:30,   color:'#f6c177'},
+  {lv:5,  name:'キジトラ',      emoji:'😻', rate:60,   color:'#a78760'},
+  {lv:6,  name:'ロシアンブルー',emoji:'😽', rate:120,  color:'#8fb5d1'},
+  {lv:7,  name:'ペルシャ',      emoji:'🙀', rate:250,  color:'#ffe9d4'},
+  {lv:8,  name:'メインクーン',  emoji:'😼', rate:500,  color:'#c79b6f'},
+  {lv:9,  name:'スコティッシュ',emoji:'🐈‍⬛', rate:1000, color:'#5b4a44'},
+  {lv:10, name:'ライオン（幻）',emoji:'🦁', rate:2500, color:'#f4b740'},
 ];
 
 const GRID_BASE = 16;
@@ -778,7 +832,12 @@ let state = load() || {
   speedUntil: 0,
   lastBonusDate: '',
   firstHintShown: false,
+  lastCansRecovery: Date.now(),
+  tutorialStep: 0,
 };
+// ensure new fields exist for returning players
+if (!state.lastCansRecovery) state.lastCansRecovery = Date.now();
+if (state.tutorialStep === undefined) state.tutorialStep = 3;
 // ensure grid size matches expanded state
 const __targetSize = state.expanded ? GRID_EXPANDED : GRID_BASE;
 if (state.grid.length !== __targetSize){
@@ -842,6 +901,8 @@ function renderHud(){
   // summon button enabled if has can AND space AND not animating
   $summonBtn.disabled = isSummoning || state.cans < 1 || state.grid.every(x => x);
   $summonBtn.classList.toggle('has-charm', state.luckyCharm > 0);
+  // tutorial glow on summon button (step 0)
+  $summonBtn.classList.toggle('tutorial-glow', state.tutorialStep === 0);
   // speed badge
   const speedRemain = Math.ceil((state.speedUntil - Date.now())/1000);
   if (speedRemain > 0){
@@ -850,23 +911,41 @@ function renderHud(){
   } else {
     $speedBadge.style.display = 'none';
   }
-  // first hint: show only if coursesイベント once
+  // first hint: show only if course is empty
   if (!state.firstHintShown && state.course.length === 0){
     $firstHint.style.display = 'flex';
   } else {
     $firstHint.style.display = 'none';
   }
+  // course needs-cat highlight (tutorial step 1)
+  $course.classList.toggle('needs-cat', state.tutorialStep === 1 && state.course.length === 0);
+  // cans recovery timer
+  const $cansTimer = document.getElementById('cansTimer');
+  if (state.cans >= CANS_MAX){
+    $cansTimer.textContent = 'MAX';
+  } else {
+    const nextMs = CANS_RECOVERY_MS - (Date.now() - state.lastCansRecovery) % CANS_RECOVERY_MS;
+    const nm = Math.floor(nextMs/60000), ns = Math.floor((nextMs%60000)/1000);
+    $cansTimer.textContent = `${nm}:${String(ns).padStart(2,'0')}`;
+  }
 }
 
 function renderTree(){
   $tree.innerHTML = '';
+  const unlocked = state.maxUnlocked;
+  document.getElementById('zukanHint').textContent = `${unlocked} / 10 解放`;
+  document.getElementById('zukanBar').style.width = (unlocked / 10 * 100) + '%';
   CATS.forEach(c => {
+    const locked = c.lv > unlocked;
+    const dur = Math.max(4, 12 - c.lv * 0.8);
+    const rate = (c.rate / (dur * 1.2)).toFixed(1);
     const t = document.createElement('div');
-    t.className = 'tier' + (c.lv > state.maxUnlocked ? ' locked' : '');
+    t.className = 'tier' + (locked ? ' locked' : '');
     t.innerHTML = `
       <span class="b">Lv${c.lv}</span>
-      <div class="e">${c.lv > state.maxUnlocked ? '❓' : c.emoji}</div>
-      <div class="n">${c.lv > state.maxUnlocked ? '???' : c.name}</div>
+      <div class="e">${locked ? '❓' : c.emoji}</div>
+      <div class="n">${locked ? '???' : c.name}</div>
+      <div class="tier-rate">${locked ? '' : rate+'P/s'}</div>
     `;
     $tree.appendChild(t);
   });
@@ -880,6 +959,10 @@ function renderCourse(){
     el.className = 'runner bounce';
     el.style.setProperty('--dur', c.dur + 's');
     el.style.animationDelay = `-${(i * 1.5) % c.dur}s`;
+    // サイズをレベルに応じて変える（Lv1=小, Lv10=大）
+    const sz = 20 + Math.round(c.lv * 1.6);
+    el.style.fontSize = sz + 'px';
+    if (c.lv >= 9) el.style.filter = 'drop-shadow(0 0 5px gold)';
     el.textContent = catData(c.lv).emoji;
     el.dataset.courseIdx = i;
     el.draggable = true;
@@ -1049,6 +1132,8 @@ function moveGridToCourse(gridIdx){
   state.firstHintShown = true;
   toast(`${catData(cat.lv).name} がコースへ！`);
   save(); renderGrid(); renderHud(); renderCourse();
+  advanceTutorial(1);
+  if (state.tutorialStep === 2) setTimeout(()=>advanceTutorial(2), 1500);
 }
 
 function moveCourseToGrid(courseIdx){
@@ -1168,6 +1253,7 @@ function summon(){
     $gacha.classList.remove('show');
     if (usedCharm) toast('🍀 幸運の鈴で Lv2 が出現！');
     else if (isRare) toast('✨ キラッ！ 何かの予感…');
+    advanceTutorial(0);
   }, 1200);
 }
 
@@ -1179,22 +1265,75 @@ function sendToCourse(){
   moveGridToCourse(bestIdx);
 }
 
+/* ============ Tutorial ============ */
+const TUTORIAL_MSGS = [
+  '🐾 グリッドの猫をコースへドラッグしよう！',
+  '✅ ポイント自動獲得スタート！コースに5匹置けるよ',
+  null,
+];
+function advanceTutorial(step){
+  if (state.tutorialStep !== step) return;
+  state.tutorialStep = step + 1;
+  save();
+  if (TUTORIAL_MSGS[step]) toast(TUTORIAL_MSGS[step]);
+  renderHud();
+}
+
+/* ============ Milestone bonuses ============ */
+const MILESTONES = {
+  2:  { cans:1, pts:0,   msg:'🎉 初進化！ 🥫×1 ボーナス' },
+  5:  { cans:2, pts:50,  msg:'🎉 中堅猫！ 🥫×2 ＆ P+50' },
+  8:  { cans:3, pts:200, msg:'🎉 レアにゃんこ！ 🥫×3 ＆ P+200' },
+  10: { cans:5, pts:500, msg:'👑 伝説のライオン！ 🥫×5 ＆ P+500' },
+};
+
 function showLevelUp(lv){
   const c = catData(lv);
+  const m = MILESTONES[lv];
+  if (m){
+    state.cans += m.cans;
+    state.points += m.pts;
+    save();
+    // Lv10 全画面ゴールドフラッシュ
+    if (lv === 10){
+      const flash = document.createElement('div');
+      flash.style.cssText='position:fixed;inset:0;background:rgba(244,183,64,.45);z-index:100;pointer-events:none;animation:gachaFlash 1.2s ease-out forwards';
+      document.body.appendChild(flash);
+      setTimeout(()=>flash.remove(), 1200);
+    }
+    document.getElementById('mDesc').textContent = m.msg;
+  } else {
+    document.getElementById('mDesc').textContent = lv === 10
+      ? 'でんせつの ライオンが目をさました！'
+      : `あたらしい猫 ${c.name} がなかまになった！`;
+  }
   document.getElementById('mName').textContent = c.name;
   document.getElementById('mEmoji').textContent = c.emoji;
-  document.getElementById('mDesc').textContent = lv === 10
-    ? 'でんせつの ライオンが目をさました！'
-    : `あたらしい猫 ${c.name} がなかまになった！`;
   document.getElementById('modal').classList.add('show');
 }
 
 /* ============ Income loop ============ */
+const CANS_MAX = 5;
+const CANS_RECOVERY_MS = 1800000; // 30分
 let lastTick = Date.now();
 setInterval(()=>{
   const now = Date.now();
   const dt = (now - lastTick)/1000;
   lastTick = now;
+
+  // 猫缶の時間回復（上限5缶）
+  if (state.cans < CANS_MAX){
+    const recovered = Math.floor((now - state.lastCansRecovery) / CANS_RECOVERY_MS);
+    if (recovered > 0){
+      const added = Math.min(recovered, CANS_MAX - state.cans);
+      state.cans += added;
+      state.lastCansRecovery += added * CANS_RECOVERY_MS;
+      if (added > 0) save();
+    }
+  } else {
+    state.lastCansRecovery = now;
+  }
+
   // speed boost multiplier
   const speedMul = state.speedUntil > now ? 2 : 1;
   // adjust runner animation duration via CSS variable: scale down for speed
@@ -1206,6 +1345,7 @@ setInterval(()=>{
   });
   if (!state.course.length) {
     if (speedMul === 1 && $speedBadge.style.display !== 'none') renderHud();
+    else renderHud();
     return;
   }
   let gain = 0;
@@ -1224,7 +1364,6 @@ setInterval(()=>{
     setTimeout(()=>pop.remove(), 1000);
   }
   renderHud();
-  if (Math.random() < 0.02) save();
 }, 200);
 
 /* ============ Events ============ */
@@ -1287,6 +1426,30 @@ const SHOP_ITEMS = [
       toast('🏠 おうちが広くなった！');
     }
   },
+  {
+    id:'cans3',
+    name:'猫缶パック（小）',
+    desc:'猫缶を3個ゲット',
+    icon:'🥫',
+    price:200,
+    type:'consumable',
+    action: ()=>{
+      state.cans += 3;
+      toast('🥫×3 ゲット！');
+    }
+  },
+  {
+    id:'cans6',
+    name:'猫缶パック（大）',
+    desc:'猫缶を6個ゲット！お得！',
+    icon:'🥫',
+    price:350,
+    type:'consumable',
+    action: ()=>{
+      state.cans += 6;
+      toast('🥫×6 ゲット！');
+    }
+  },
 ];
 
 function renderShop(){
@@ -1323,43 +1486,54 @@ function renderShop(){
 }
 
 /* ============ Login bonus ============ */
+function showBonusModal(){
+  document.getElementById('bonusModal').classList.add('show');
+}
 function checkLoginBonus(){
   const today = new Date();
   const ymd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
   if (state.lastBonusDate !== ymd){
     state.lastBonusDate = ymd;
-    state.points += 50;
+    state.cans += 3;
+    state.points += 100;
     save();
-    setTimeout(()=>toast('📅 ログインボーナス！ ポイント +50'), 600);
+    setTimeout(showBonusModal, 600);
   }
 }
-document.getElementById('rewardAd').addEventListener('click', ()=>{
-  if (rewardCooldownUntil > Date.now()) return;
-  toast('（広告再生シミュレーション）');
-  setTimeout(()=>{
-    state.points += 50;
-    toast('ポイント +50！');
-    save(); renderHud();
-    rewardCooldownUntil = Date.now() + 30000;
-    updateRewardButton();
-  }, 800);
+document.getElementById('bonusClose').addEventListener('click', ()=>{
+  document.getElementById('bonusModal').classList.remove('show');
+  renderHud();
 });
 
-// reward ad cooldown
+// reward ad cooldown (10 minutes)
+const REWARD_COOLDOWN_MS = 600000;
 let rewardCooldownUntil = 0;
 const $rewardBtn = document.getElementById('rewardAd');
 const REWARD_LABEL = $rewardBtn.innerHTML;
 function updateRewardButton(){
   const remain = Math.ceil((rewardCooldownUntil - Date.now()) / 1000);
   if (remain > 0){
+    const m = Math.floor(remain/60), s = remain%60;
     $rewardBtn.disabled = true;
-    $rewardBtn.innerHTML = `⏳ 待機中… ${remain}s`;
+    $rewardBtn.innerHTML = `⏳ 待機中… ${m}:${String(s).padStart(2,'0')}`;
   } else {
     $rewardBtn.disabled = false;
     $rewardBtn.innerHTML = REWARD_LABEL;
   }
 }
+document.getElementById('rewardAd').addEventListener('click', ()=>{
+  if (rewardCooldownUntil > Date.now()) return;
+  toast('（広告再生シミュレーション）');
+  setTimeout(()=>{
+    state.cans += 2;
+    toast('🥫×2 ゲット！');
+    save(); renderHud();
+    rewardCooldownUntil = Date.now() + REWARD_COOLDOWN_MS;
+    updateRewardButton();
+  }, 800);
+});
 setInterval(updateRewardButton, 1000);
+
 document.getElementById('mClose').addEventListener('click', ()=>{
   document.getElementById('modal').classList.remove('show');
 });
@@ -1378,6 +1552,10 @@ if (window.visualViewport){
 
 renderGrid(); renderHud(); renderTree(); renderCourse();
 checkLoginBonus();
+
+// セーブ強化：バックグラウンド移行時と閉じる直前に保存
+document.addEventListener('visibilitychange', ()=>{ if (document.hidden) save(); });
+window.addEventListener('beforeunload', save);
 </script>
 </body>
 </html>
