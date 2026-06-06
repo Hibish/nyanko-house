@@ -11,7 +11,7 @@
 <title>にゃんこハウス｜NYANKO HOUSE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-1:#fff4e6;
@@ -38,7 +38,7 @@ body{
   overflow:hidden;
 }
 body{
-  font-family:'M PLUS Rounded 1c','Kosugi Maru',system-ui,sans-serif;
+  font-family:'M PLUS Rounded 1c',system-ui,sans-serif;
   color:var(--ink);
   background:
     radial-gradient(900px 600px at 10% 0%,#ffd9e6 0%,transparent 55%),
@@ -212,7 +212,8 @@ body::before{
   display:flex;align-items:center;gap:6px;
   background:var(--ink);color:#fff;
   padding:6px 12px;border-radius:999px;
-  font-weight:800;font-size:13px;
+  font-family:'Dela Gothic One',sans-serif;
+  font-size:14px;
   box-shadow:var(--inset);
   border:2px solid var(--ink);
 }
@@ -230,7 +231,8 @@ body::before{
   display:flex;align-items:center;gap:6px;
   background:var(--ink);color:#fff;
   padding:6px 12px;border-radius:999px;
-  font-weight:800;font-size:13px;
+  font-family:'Dela Gothic One',sans-serif;
+  font-size:14px;
   box-shadow:var(--inset);
   border:2px solid var(--ink);
 }
@@ -253,7 +255,7 @@ body::before{
   overflow:hidden;
 }
 .course-title{
-  font-family:'Mochiy Pop One',sans-serif;
+  font-family:'Dela Gothic One',sans-serif;
   font-size:11px;color:var(--brown);
   display:flex;align-items:center;gap:6px;
   margin-bottom:6px;
@@ -332,7 +334,7 @@ body::before{
   margin-bottom:8px;
 }
 .panel-head h2{
-  font-family:'Mochiy Pop One',sans-serif;
+  font-family:'Dela Gothic One',sans-serif;
   font-size:12px;color:var(--brown);
 }
 .hint{font-size:10px;color:var(--brown-soft)}
@@ -364,23 +366,26 @@ body::before{
 .nyan{
   width:84%;height:84%;
   border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#fff,#ffe5d0 60%,#f3c8a5);
+  background:transparent;
   border:2px solid var(--ink);
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;
+  overflow:hidden;
   box-shadow:var(--inset),0 4px 0 rgba(91,58,41,.15);
   position:relative;
   transition:transform .15s;
 }
+.nyan svg{width:100%;height:100%;display:block}
 .nyan.dragging{transform:scale(1.08) rotate(-3deg);opacity:.9;z-index:10}
 .nyan .lv{
-  position:absolute;bottom:-6px;right:-6px;
-  background:var(--ink);color:#fff;font-size:9px;font-weight:800;
-  border-radius:999px;padding:2px 6px;
-  border:2px solid #fff;
+  position:absolute;bottom:3px;right:3px;
+  background:var(--ink);color:#fff;
+  font-family:'Dela Gothic One',sans-serif;
+  font-size:8px;
+  border-radius:999px;padding:2px 5px;
+  border:1.5px solid rgba(255,255,255,0.8);
+  z-index:2;
 }
 .nyan.legendary{
-  background:radial-gradient(circle at 35% 30%,#fff,#ffe27a 50%,#f4b740 80%);
   animation:glow 1.6s ease-in-out infinite;
 }
 @keyframes glow{0%,100%{box-shadow:var(--inset),0 0 0 0 rgba(244,183,64,.6)}50%{box-shadow:var(--inset),0 0 0 8px rgba(244,183,64,0)}}
@@ -527,7 +532,8 @@ body::before{
   display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
 }
 .zukan-grid .tier{width:auto;padding:10px 6px}
-.zukan-grid .tier .e{font-size:36px}
+.zukan-grid .tier .e{font-size:36px;display:flex;align-items:center;justify-content:center}
+.zukan-grid .tier .e svg{width:48px;height:48px;border-radius:50%;overflow:hidden}
 .zukan-grid .tier .n{font-size:11px;margin-top:6px}
 .tier{
   flex:0 0 auto;
@@ -537,7 +543,8 @@ body::before{
   position:relative;
 }
 .tier.locked{opacity:.4;filter:grayscale(.6)}
-.tier .e{font-size:22px;line-height:1}
+.tier .e{font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center}
+.tier .e svg{width:36px;height:36px;border-radius:50%;overflow:hidden}
 .tier .n{font-size:9px;color:var(--brown-soft);margin-top:2px;letter-spacing:.02em}
 .tier .b{
   position:absolute;top:-6px;left:-6px;
@@ -770,16 +777,26 @@ body::before{
 <script>
 /* ============ Data ============ */
 const CATS = [
-  {lv:1,  name:'子猫',          emoji:'🐱', rate:3,    color:'#ffd6a5'},
-  {lv:2,  name:'茶トラ',        emoji:'🐈', rate:7,    color:'#e9a06b'},
-  {lv:3,  name:'サバトラ',      emoji:'😺', rate:15,   color:'#b9c4cc'},
-  {lv:4,  name:'三毛猫',        emoji:'😸', rate:30,   color:'#f6c177'},
-  {lv:5,  name:'キジトラ',      emoji:'😻', rate:60,   color:'#a78760'},
-  {lv:6,  name:'ロシアンブルー',emoji:'😽', rate:120,  color:'#8fb5d1'},
-  {lv:7,  name:'ペルシャ',      emoji:'🙀', rate:250,  color:'#ffe9d4'},
-  {lv:8,  name:'メインクーン',  emoji:'😼', rate:500,  color:'#c79b6f'},
-  {lv:9,  name:'スコティッシュ',emoji:'🐈‍⬛', rate:1000, color:'#5b4a44'},
-  {lv:10, name:'ライオン（幻）',emoji:'🦁', rate:2500, color:'#f4b740'},
+  {lv:1, name:'子猫', emoji:'🐱', rate:3, color:'#ffd6a5',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#ffd6a5"/><polygon points="10,22 17,6 24,20" fill="#ffd6a5"/><polygon points="36,20 43,6 50,22" fill="#ffd6a5"/><polygon points="12,21 17,10 22,21" fill="#ffb8c8"/><polygon points="38,21 43,10 48,21" fill="#ffb8c8"/><circle cx="30" cy="33" r="17" fill="#ffd6a5"/><ellipse cx="24" cy="30" rx="3.5" ry="3.5" fill="#2a1f1a"/><ellipse cx="36" cy="30" rx="3.5" ry="3.5" fill="#2a1f1a"/><circle cx="25.2" cy="28.8" r="1.2" fill="#fff"/><circle cx="37.2" cy="28.8" r="1.2" fill="#fff"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#ff9eb5"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#cc607a" stroke-width="1.2" fill="none"/><line x1="8" y1="35" x2="24" y2="36.5" stroke="#ccc" stroke-width="0.8" stroke-linecap="round"/><line x1="8" y1="37.5" x2="24" y2="38" stroke="#ccc" stroke-width="0.8" stroke-linecap="round"/><line x1="52" y1="35" x2="36" y2="36.5" stroke="#ccc" stroke-width="0.8" stroke-linecap="round"/><line x1="52" y1="37.5" x2="36" y2="38" stroke="#ccc" stroke-width="0.8" stroke-linecap="round"/></svg>`},
+  {lv:2, name:'茶トラ', emoji:'🐈', rate:7, color:'#e9a06b',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#e9894a"/><polygon points="9,22 16,6 24,20" fill="#e9894a"/><polygon points="36,20 44,6 51,22" fill="#e9894a"/><polygon points="11,21 16,10 22,21" fill="#ffb8c8"/><polygon points="38,21 44,10 49,21" fill="#ffb8c8"/><circle cx="30" cy="33" r="17" fill="#e9894a"/><line x1="24" y1="17" x2="23" y2="24" stroke="#c05820" stroke-width="2" stroke-linecap="round"/><line x1="30" y1="15" x2="30" y2="24" stroke="#c05820" stroke-width="2" stroke-linecap="round"/><line x1="36" y1="17" x2="37" y2="24" stroke="#c05820" stroke-width="2" stroke-linecap="round"/><ellipse cx="24" cy="30" rx="3.5" ry="3.5" fill="#cc8800"/><ellipse cx="36" cy="30" rx="3.5" ry="3.5" fill="#cc8800"/><ellipse cx="24" cy="30" rx="2" ry="3.5" fill="#1a1008"/><ellipse cx="36" cy="30" rx="2" ry="3.5" fill="#1a1008"/><circle cx="24.8" cy="28.8" r="1" fill="#fff"/><circle cx="36.8" cy="28.8" r="1" fill="#fff"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#e87a3a"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#a04020" stroke-width="1.2" fill="none"/><line x1="7" y1="35" x2="24" y2="36.5" stroke="#d4864055" stroke-width="0.9" stroke-linecap="round"/><line x1="7" y1="38" x2="24" y2="38" stroke="#d4864055" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="35" x2="36" y2="36.5" stroke="#d4864055" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="38" x2="36" y2="38" stroke="#d4864055" stroke-width="0.9" stroke-linecap="round"/></svg>`},
+  {lv:3, name:'サバトラ', emoji:'😺', rate:15, color:'#b9c4cc',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#b9c4cc"/><polygon points="9,22 16,6 24,20" fill="#b9c4cc"/><polygon points="36,20 44,6 51,22" fill="#b9c4cc"/><polygon points="11,21 16,10 22,21" fill="#ffb8c8"/><polygon points="38,21 44,10 49,21" fill="#ffb8c8"/><circle cx="30" cy="33" r="17" fill="#b9c4cc"/><line x1="25" y1="17" x2="24" y2="24" stroke="#8a9ca8" stroke-width="1.8" stroke-linecap="round"/><line x1="30" y1="16" x2="30" y2="24" stroke="#8a9ca8" stroke-width="1.8" stroke-linecap="round"/><line x1="35" y1="17" x2="36" y2="24" stroke="#8a9ca8" stroke-width="1.8" stroke-linecap="round"/><ellipse cx="23.5" cy="30" rx="3.5" ry="4" fill="#5ba35b"/><ellipse cx="36.5" cy="30" rx="3.5" ry="4" fill="#5ba35b"/><ellipse cx="23.5" cy="30" rx="1.8" ry="4" fill="#1a2a1a"/><ellipse cx="36.5" cy="30" rx="1.8" ry="4" fill="#1a2a1a"/><circle cx="24.3" cy="28.5" r="1" fill="#fff"/><circle cx="37.3" cy="28.5" r="1" fill="#fff"/><circle cx="22" cy="32.5" r="2.5" fill="#ffb8c8" opacity="0.6"/><circle cx="38" cy="32.5" r="2.5" fill="#ffb8c8" opacity="0.6"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#cc99aa"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#996680" stroke-width="1.2" fill="none"/><line x1="7" y1="35" x2="23" y2="36.5" stroke="#aaa" stroke-width="0.9" stroke-linecap="round"/><line x1="7" y1="38" x2="23" y2="38" stroke="#aaa" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="35" x2="37" y2="36.5" stroke="#aaa" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="38" x2="37" y2="38" stroke="#aaa" stroke-width="0.9" stroke-linecap="round"/></svg>`},
+  {lv:4, name:'三毛猫', emoji:'😸', rate:30, color:'#f6c177',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#fff5f0"/><polygon points="9,22 16,6 24,20" fill="#fff5f0"/><polygon points="36,20 44,6 51,22" fill="#fff5f0"/><polygon points="11,21 16,10 22,21" fill="#ffb8c8"/><polygon points="38,21 44,10 49,21" fill="#333"/><circle cx="30" cy="33" r="17" fill="#fff5f0"/><ellipse cx="19" cy="30" rx="8" ry="9" fill="#e9894a" opacity="0.7"/><ellipse cx="42" cy="28" rx="7" ry="6" fill="#333" opacity="0.7"/><ellipse cx="23.5" cy="30" rx="3.5" ry="4" fill="#4488cc"/><ellipse cx="36.5" cy="30" rx="3.5" ry="4" fill="#4488cc"/><ellipse cx="23.5" cy="30" rx="1.8" ry="4" fill="#0a0a1a"/><ellipse cx="36.5" cy="30" rx="1.8" ry="4" fill="#0a0a1a"/><circle cx="24.5" cy="28.5" r="1" fill="#fff"/><circle cx="37.5" cy="28.5" r="1" fill="#fff"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#ff9eb5"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#cc607a" stroke-width="1.2" fill="none"/><line x1="7" y1="35" x2="23" y2="36.5" stroke="#ccc" stroke-width="0.9" stroke-linecap="round"/><line x1="7" y1="38" x2="23" y2="38" stroke="#ccc" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="35" x2="37" y2="36.5" stroke="#ccc" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="38" x2="37" y2="38" stroke="#ccc" stroke-width="0.9" stroke-linecap="round"/></svg>`},
+  {lv:5, name:'キジトラ', emoji:'😻', rate:60, color:'#a78760',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#a78760"/><polygon points="9,22 16,6 24,20" fill="#a78760"/><polygon points="36,20 44,6 51,22" fill="#a78760"/><polygon points="11,21 16,10 22,21" fill="#ffb8c8"/><polygon points="38,21 44,10 49,21" fill="#ffb8c8"/><circle cx="30" cy="33" r="17" fill="#a78760"/><line x1="25" y1="17" x2="24" y2="24" stroke="#7a5c3c" stroke-width="2" stroke-linecap="round"/><line x1="30" y1="15" x2="30" y2="24" stroke="#7a5c3c" stroke-width="2" stroke-linecap="round"/><line x1="35" y1="17" x2="36" y2="24" stroke="#7a5c3c" stroke-width="2" stroke-linecap="round"/><path d="M14 35 Q20 33 26 35" stroke="#7a5c3c" stroke-width="1.5" fill="none"/><path d="M14 39 Q20 37 26 39" stroke="#7a5c3c" stroke-width="1.5" fill="none"/><path d="M34 35 Q40 33 46 35" stroke="#7a5c3c" stroke-width="1.5" fill="none"/><path d="M34 39 Q40 37 46 39" stroke="#7a5c3c" stroke-width="1.5" fill="none"/><ellipse cx="23.5" cy="30" rx="3.5" ry="4" fill="#cc9900"/><ellipse cx="36.5" cy="30" rx="3.5" ry="4" fill="#cc9900"/><ellipse cx="23.5" cy="30" rx="1.8" ry="4" fill="#1a1005"/><ellipse cx="36.5" cy="30" rx="1.8" ry="4" fill="#1a1005"/><circle cx="24.3" cy="28.5" r="1" fill="#fff"/><circle cx="37.3" cy="28.5" r="1" fill="#fff"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#cc7755"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#8a4030" stroke-width="1.2" fill="none"/><line x1="7" y1="35" x2="22" y2="36.5" stroke="#8a705560" stroke-width="0.9" stroke-linecap="round"/><line x1="7" y1="38" x2="22" y2="38" stroke="#8a705560" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="35" x2="38" y2="36.5" stroke="#8a705560" stroke-width="0.9" stroke-linecap="round"/><line x1="53" y1="38" x2="38" y2="38" stroke="#8a705560" stroke-width="0.9" stroke-linecap="round"/></svg>`},
+  {lv:6, name:'ロシアンブルー', emoji:'😽', rate:120, color:'#8fb5d1',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#8fb5d1"/><polygon points="8,24 15,5 24,21" fill="#8fb5d1"/><polygon points="36,21 45,5 52,24" fill="#8fb5d1"/><polygon points="10,23 15,9 23,22" fill="#7fa5c0"/><polygon points="37,22 45,9 50,23" fill="#7fa5c0"/><circle cx="30" cy="33" r="17" fill="#8fb5d1"/><ellipse cx="30" cy="27" rx="14" ry="4" fill="#aecde0" opacity="0.4"/><ellipse cx="23.5" cy="30" rx="4" ry="4.5" fill="#2ea87a"/><ellipse cx="36.5" cy="30" rx="4" ry="4.5" fill="#2ea87a"/><ellipse cx="23.5" cy="30" rx="2" ry="4.5" fill="#0d1f15"/><ellipse cx="36.5" cy="30" rx="2" ry="4.5" fill="#0d1f15"/><circle cx="24.5" cy="28.5" r="1.2" fill="#fff"/><circle cx="37.5" cy="28.5" r="1.2" fill="#fff"/><ellipse cx="30" cy="36" rx="2" ry="1.5" fill="#7aa0bb"/><path d="M28 37.5 Q30 40 32 37.5" stroke="#5a8099" stroke-width="1.2" fill="none"/><line x1="6" y1="35" x2="22" y2="36.5" stroke="#9ac0d4" stroke-width="0.9" stroke-linecap="round"/><line x1="6" y1="38" x2="22" y2="38" stroke="#9ac0d4" stroke-width="0.9" stroke-linecap="round"/><line x1="54" y1="35" x2="38" y2="36.5" stroke="#9ac0d4" stroke-width="0.9" stroke-linecap="round"/><line x1="54" y1="38" x2="38" y2="38" stroke="#9ac0d4" stroke-width="0.9" stroke-linecap="round"/></svg>`},
+  {lv:7, name:'ペルシャ', emoji:'🙀', rate:250, color:'#ffe9d4',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#ffe9d4"/><circle cx="14" cy="15" r="7" fill="#ffe9d4"/><circle cx="46" cy="15" r="7" fill="#ffe9d4"/><circle cx="14" cy="15" r="5" fill="#ffc8a8"/><circle cx="46" cy="15" r="5" fill="#ffc8a8"/><circle cx="30" cy="33" r="19" fill="#ffe9d4"/><circle cx="17" cy="36" r="7" fill="#ffd4b5" opacity="0.7"/><circle cx="43" cy="36" r="7" fill="#ffd4b5" opacity="0.7"/><ellipse cx="23.5" cy="29" rx="4" ry="4.5" fill="#5599dd"/><ellipse cx="36.5" cy="29" rx="4" ry="4.5" fill="#5599dd"/><ellipse cx="23.5" cy="29" rx="2" ry="4.5" fill="#080818"/><ellipse cx="36.5" cy="29" rx="2" ry="4.5" fill="#080818"/><circle cx="24.5" cy="27.5" r="1.2" fill="#fff"/><circle cx="37.5" cy="27.5" r="1.2" fill="#fff"/><circle cx="30" cy="35" r="3" fill="#ff9eb5"/><circle cx="30" cy="33.5" r="1.5" fill="#e87a99"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#cc607a" stroke-width="1.2" fill="none"/><line x1="6" y1="34" x2="21" y2="35.5" stroke="#ddd" stroke-width="0.9" stroke-linecap="round"/><line x1="6" y1="37" x2="21" y2="37.5" stroke="#ddd" stroke-width="0.9" stroke-linecap="round"/><line x1="54" y1="34" x2="39" y2="35.5" stroke="#ddd" stroke-width="0.9" stroke-linecap="round"/><line x1="54" y1="37" x2="39" y2="37.5" stroke="#ddd" stroke-width="0.9" stroke-linecap="round"/></svg>`},
+  {lv:8, name:'メインクーン', emoji:'😼', rate:500, color:'#c79b6f',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#c79b6f"/><polygon points="7,25 13,4 23,21" fill="#c79b6f"/><polygon points="37,21 47,4 53,25" fill="#c79b6f"/><polygon points="9,24 13,8 22,22" fill="#ffb8c8"/><polygon points="38,22 47,8 51,24" fill="#ffb8c8"/><line x1="13" y1="8" x2="9" y2="4" stroke="#8b5e3c" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="8" x2="16" y2="3" stroke="#8b5e3c" stroke-width="1.5" stroke-linecap="round"/><line x1="47" y1="8" x2="44" y2="4" stroke="#8b5e3c" stroke-width="1.5" stroke-linecap="round"/><line x1="47" y1="8" x2="51" y2="3" stroke="#8b5e3c" stroke-width="1.5" stroke-linecap="round"/><circle cx="30" cy="33" r="17" fill="#c79b6f"/><circle cx="16" cy="37" r="7" fill="#b8895a" opacity="0.6"/><circle cx="44" cy="37" r="7" fill="#b8895a" opacity="0.6"/><line x1="25" y1="17" x2="24" y2="24" stroke="#8b5e3c" stroke-width="2" stroke-linecap="round"/><line x1="30" y1="15" x2="30" y2="24" stroke="#8b5e3c" stroke-width="2" stroke-linecap="round"/><line x1="35" y1="17" x2="36" y2="24" stroke="#8b5e3c" stroke-width="2" stroke-linecap="round"/><ellipse cx="23.5" cy="30" rx="3.5" ry="4" fill="#dd8822"/><ellipse cx="36.5" cy="30" rx="3.5" ry="4" fill="#dd8822"/><ellipse cx="23.5" cy="30" rx="1.8" ry="4" fill="#1a0d00"/><ellipse cx="36.5" cy="30" rx="1.8" ry="4" fill="#1a0d00"/><circle cx="24.3" cy="28.5" r="1" fill="#fff"/><circle cx="37.3" cy="28.5" r="1" fill="#fff"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#cc7755"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#8a4020" stroke-width="1.2" fill="none"/><line x1="6" y1="35" x2="22" y2="36.5" stroke="#a8825540" stroke-width="1" stroke-linecap="round"/><line x1="6" y1="38" x2="22" y2="38" stroke="#a8825540" stroke-width="1" stroke-linecap="round"/><line x1="54" y1="35" x2="38" y2="36.5" stroke="#a8825540" stroke-width="1" stroke-linecap="round"/><line x1="54" y1="38" x2="38" y2="38" stroke="#a8825540" stroke-width="1" stroke-linecap="round"/></svg>`},
+  {lv:9, name:'スコティッシュ', emoji:'🐈‍⬛', rate:1000, color:'#5b4a44',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#7a6b64"/><path d="M10,23 Q12,14 19,16 Q18,22 14,24 Z" fill="#5b4a44"/><path d="M50,23 Q48,14 41,16 Q42,22 46,24 Z" fill="#5b4a44"/><circle cx="30" cy="33" r="18" fill="#5b4a44"/><ellipse cx="23.5" cy="30" rx="4" ry="4.5" fill="#ddcc22"/><ellipse cx="36.5" cy="30" rx="4" ry="4.5" fill="#ddcc22"/><ellipse cx="23.5" cy="30" rx="2" ry="4.5" fill="#0d0d05"/><ellipse cx="36.5" cy="30" rx="2" ry="4.5" fill="#0d0d05"/><circle cx="24.5" cy="28.5" r="1.2" fill="#fff"/><circle cx="37.5" cy="28.5" r="1.2" fill="#fff"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#cc99aa"/><path d="M27.5 37.5 Q30 40.5 32.5 37.5" stroke="#996680" stroke-width="1.2" fill="none"/><line x1="6" y1="35" x2="22" y2="36.5" stroke="#6a5a5560" stroke-width="1" stroke-linecap="round"/><line x1="6" y1="38" x2="22" y2="38" stroke="#6a5a5560" stroke-width="1" stroke-linecap="round"/><line x1="54" y1="35" x2="38" y2="36.5" stroke="#6a5a5560" stroke-width="1" stroke-linecap="round"/><line x1="54" y1="38" x2="38" y2="38" stroke="#6a5a5560" stroke-width="1" stroke-linecap="round"/></svg>`},
+  {lv:10, name:'ライオン（幻）', emoji:'🦁', rate:2500, color:'#f4b740',
+   svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="30" r="30" fill="#f4b740"/><circle cx="30" cy="30" r="26" fill="#c87920" opacity="0.8"/><circle cx="30" cy="31" r="19" fill="#f4c96c"/><polygon points="20,18 23,10 27,17" fill="#f4c96c"/><polygon points="40,18 37,10 33,17" fill="#f4c96c"/><ellipse cx="23.5" cy="30" rx="4" ry="4.5" fill="#cc7700"/><ellipse cx="36.5" cy="30" rx="4" ry="4.5" fill="#cc7700"/><ellipse cx="23.5" cy="30" rx="2" ry="4.5" fill="#1a0d00"/><ellipse cx="36.5" cy="30" rx="2" ry="4.5" fill="#1a0d00"/><circle cx="24.5" cy="28.5" r="1.2" fill="#fff"/><circle cx="37.5" cy="28.5" r="1.2" fill="#fff"/><ellipse cx="30" cy="38" rx="6" ry="4" fill="#e8a53c"/><ellipse cx="30" cy="36" rx="2.5" ry="1.8" fill="#c86020"/><path d="M27.5 37.5 Q30 41 32.5 37.5" stroke="#8a3010" stroke-width="1.5" fill="none"/><line x1="8" y1="35" x2="23" y2="37" stroke="#d4920060" stroke-width="1.2" stroke-linecap="round"/><line x1="8" y1="38.5" x2="23" y2="39" stroke="#d4920060" stroke-width="1.2" stroke-linecap="round"/><line x1="52" y1="35" x2="37" y2="37" stroke="#d4920060" stroke-width="1.2" stroke-linecap="round"/><line x1="52" y1="38.5" x2="37" y2="39" stroke="#d4920060" stroke-width="1.2" stroke-linecap="round"/></svg>`},
 ];
 
 const GRID_BASE = 16;
@@ -872,10 +889,9 @@ function renderGrid(){
     if (c){
       const n = document.createElement('div');
       n.className = 'nyan' + (c.lv === 10 ? ' legendary' : '');
-      n.style.background = `radial-gradient(circle at 35% 30%, #fff, ${catData(c.lv).color} 60%, ${shade(catData(c.lv).color,-20)} 100%)`;
       n.draggable = true;
       n.dataset.idx = i;
-      n.innerHTML = `${catData(c.lv).emoji}<span class="lv">Lv${c.lv}</span>`;
+      n.innerHTML = `${catData(c.lv).svg}<span class="lv">Lv${c.lv}</span>`;
       cell.appendChild(n);
 
       n.addEventListener('dragstart', onDragStart);
@@ -943,7 +959,7 @@ function renderTree(){
     t.className = 'tier' + (locked ? ' locked' : '');
     t.innerHTML = `
       <span class="b">Lv${c.lv}</span>
-      <div class="e">${locked ? '❓' : c.emoji}</div>
+      <div class="e">${locked ? '❓' : c.svg}</div>
       <div class="n">${locked ? '???' : c.name}</div>
       <div class="tier-rate">${locked ? '' : rate+'P/s'}</div>
     `;
