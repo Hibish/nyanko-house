@@ -646,6 +646,8 @@ body::before{
 .tier .tier-rate{
   font-size:8px;color:var(--brown-soft);margin-top:2px;font-weight:700;
 }
+.runner svg{width:100%;height:100%;display:block;border-radius:50%;overflow:hidden}
+.modal .big svg{width:96px;height:96px;border-radius:50%;display:block;margin:0 auto}
 </style>
 </head>
 <body>
@@ -982,9 +984,10 @@ function renderCourse(){
     el.style.animationDelay = `-${(i * 1.5) % c.dur}s`;
     // サイズをレベルに応じて変える（Lv1=小, Lv10=大）
     const sz = 20 + Math.round(c.lv * 1.6);
-    el.style.fontSize = sz + 'px';
+    el.style.width = sz + 'px';
+    el.style.height = sz + 'px';
     if (c.lv >= 9) el.style.filter = 'drop-shadow(0 0 5px gold)';
-    el.textContent = catData(c.lv).emoji;
+    el.innerHTML = catData(c.lv).svg;
     el.dataset.courseIdx = i;
     el.draggable = true;
     el.title = 'ドラッグで召喚エリアに戻せる';
@@ -1329,7 +1332,7 @@ function showLevelUp(lv){
       : `あたらしい猫 ${c.name} がなかまになった！`;
   }
   document.getElementById('mName').textContent = c.name;
-  document.getElementById('mEmoji').textContent = c.emoji;
+  document.getElementById('mEmoji').innerHTML = c.svg;
   document.getElementById('modal').classList.add('show');
 }
 
